@@ -1,0 +1,17 @@
+{
+  "name": "Flater",
+  "short_name": "Flater",
+  "description": "Guider, mockups, tester og rapporter - tilgjengelig uten dekning.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0C10",
+  "theme_color": "#0A0C10",
+  "icons": [
+    {
+      "src": "/assets/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

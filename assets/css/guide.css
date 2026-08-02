@@ -1,0 +1,150 @@
+/* Guide pages. Read standing up, outdoors, one-handed - so nothing here is small. */
+
+.gwrap {
+  max-width: 34rem;
+  margin-inline: auto;
+  padding: 0 0 4rem;
+}
+
+.gtop {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--ground);
+  border-bottom: 1px solid var(--line);
+  padding: 0.9rem clamp(0.9rem, 4vw, 1.25rem) 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.gback {
+  font-family: var(--mono);
+  font-size: var(--sm);
+  color: var(--faint);
+  text-decoration: none;
+  min-height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+.gback:hover { color: var(--accent); }
+
+.gtitle {
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.progress { display: flex; align-items: center; gap: 0.7rem; }
+
+.bar {
+  flex: 1;
+  height: 0.3rem;
+  background: var(--line);
+  overflow: hidden;
+}
+.bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--done);
+  transition: width 200ms ease;
+}
+
+.ptext {
+  font-family: var(--mono);
+  font-size: var(--sm);
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.gintro {
+  padding: 1rem clamp(0.9rem, 4vw, 1.25rem);
+  color: var(--dim);
+  border-bottom: 1px solid var(--line);
+  line-height: 1.6;
+}
+
+.steps { list-style: none; }
+
+.step {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: 0 0.85rem;
+  align-items: start;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 1rem clamp(0.9rem, 4vw, 1.25rem);
+  min-height: 3.75rem;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.step:hover { background: var(--card); }
+
+.num {
+  font-family: var(--mono);
+  font-size: var(--sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+  border: 1px solid var(--line);
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+}
+
+.stext {
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  padding-top: 0.25rem;
+}
+
+.snote {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: var(--mono);
+  font-size: var(--sm);
+  color: var(--faint);
+  line-height: 1.5;
+}
+
+.step[aria-pressed="true"] .num {
+  color: var(--ground);
+  background: var(--done);
+  border-color: var(--done);
+}
+.step[aria-pressed="true"] .stext {
+  color: var(--faint);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.step[aria-pressed="true"] .snote { text-decoration: none; }
+
+.gfoot {
+  padding: 1rem clamp(0.9rem, 4vw, 1.25rem);
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: var(--sm);
+  color: var(--faint);
+}
+
+.reset {
+  font: inherit;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  min-height: 2.5rem;
+}
+.reset:hover { color: var(--text); border-color: var(--faint); }

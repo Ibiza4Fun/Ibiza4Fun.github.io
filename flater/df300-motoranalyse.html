@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DF300 — motoranalyse 2. august 2026</title>
+<meta name="theme-color" content="#0A0C10">
+
+<meta name="flate:kind" content="rapport">
+<meta name="flate:date" content="2026-08-02">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+</head>
+<body>
+
+<style>
+:root{
+  --ground:#FCFCFB; --surface:#F5F3EF; --surface-2:#EDEAE3;
+  --ink:#1B1917; --ink-2:#5D584E; --ink-3:#8A8377;
+  --line:#DED9D0; --line-2:#CBC5B9;
+  --cyl:#C63C2E; --stbd:#2D7DBE; --port:#3F9E6A; --iat:#9B59B6;
+  --rpm:#8A8377;
+  --crit:#B3261E; --crit-bg:#FBEDEB; --crit-line:#E8C4BF;
+  --warn:#8A5D00; --warn-bg:#FBF3E2; --warn-line:#E8D6AE;
+  --ok:#2E6B3E; --ok-bg:#EDF5EE; --ok-line:#C2DBC8;
+  --sans:ui-sans-serif,"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"SF Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --ground:#161513; --surface:#1E1C19; --surface-2:#272420;
+    --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
+    --line:#312E29; --line-2:#413D36;
+    --cyl:#D65A4C; --stbd:#4795D2; --port:#3DA26E; --iat:#B078C8;
+    --rpm:#7A7468;
+    --crit:#E0655C; --crit-bg:#2A1917; --crit-line:#4A2A25;
+    --warn:#D0A215; --warn-bg:#26200F; --warn-line:#453A1B;
+    --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#161513; --surface:#1E1C19; --surface-2:#272420;
+  --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
+  --line:#312E29; --line-2:#413D36;
+  --cyl:#D65A4C; --stbd:#4795D2; --port:#3DA26E; --iat:#B078C8;
+  --rpm:#7A7468;
+  --crit:#E0655C; --crit-bg:#2A1917; --crit-line:#4A2A25;
+  --warn:#D0A215; --warn-bg:#26200F; --warn-line:#453A1B;
+  --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
+}
+:root[data-theme="light"]{
+  --ground:#FCFCFB; --surface:#F5F3EF; --surface-2:#EDEAE3;
+  --ink:#1B1917; --ink-2:#5D584E; --ink-3:#8A8377;
+  --line:#DED9D0; --line-2:#CBC5B9;
+  --cyl:#C63C2E; --stbd:#2D7DBE; --port:#3F9E6A; --iat:#9B59B6;
+  --rpm:#8A8377;
+  --crit:#B3261E; --crit-bg:#FBEDEB; --crit-line:#E8C4BF;
+  --warn:#8A5D00; --warn-bg:#FBF3E2; --warn-line:#E8D6AE;
+  --ok:#2E6B3E; --ok-bg:#EDF5EE; --ok-line:#C2DBC8;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 22px 80px;
+  display:flex;flex-direction:column;gap:34px}
+
+.eyebrow{font:600 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 10px}
+
+header .rule{height:3px;background:var(--ink);width:46px;margin-bottom:20px}
+h1{font-size:clamp(28px,4.6vw,42px);line-height:1.1;margin:0 0 12px;
+  letter-spacing:-.02em;text-wrap:balance;font-weight:660}
+.ident{display:flex;flex-wrap:wrap;gap:6px 22px;font:13px/1.5 var(--mono);color:var(--ink-2)}
+.ident b{color:var(--ink);font-weight:600}
+
+.verdict{border:1px solid var(--crit-line);background:var(--crit-bg);
+  border-radius:11px;padding:20px 22px;display:flex;flex-direction:column;gap:9px}
+.verdict .tag{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;
+  font:700 10.5px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--crit)}
+.verdict .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--crit)}
+.verdict h2{margin:0;font-size:21px;line-height:1.3;font-weight:640;text-wrap:balance}
+.verdict p{margin:0;color:var(--ink-2);font-size:15px;max-width:64ch}
+
+.tiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(196px,1fr))}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:15px 16px;display:flex;flex-direction:column;gap:5px}
+.tile .lbl{font:600 10px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.tile .val{font:640 30px/1.05 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tile .val .u{font-size:15px;color:var(--ink-2);font-weight:500;margin-left:2px}
+.tile .note{font-size:12.5px;color:var(--ink-2);line-height:1.45}
+.tile.bad .val{color:var(--crit)} .tile.good .val{color:var(--ok)} .tile.warn .val{color:var(--warn)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:20px 20px 16px}
+.card h3{margin:0 0 4px;font-size:17px;font-weight:640;letter-spacing:-.01em}
+.card .sub{margin:0 0 16px;font-size:13.5px;color:var(--ink-2);max-width:70ch}
+.scroll{overflow-x:auto}
+
+.legend{display:flex;flex-wrap:wrap;gap:5px 18px;margin:0 0 12px;
+  font:12.5px var(--mono);color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+
+svg{display:block}
+.gl{stroke:var(--line);stroke-width:1}
+.ax{fill:var(--ink-3);font:11px var(--mono);font-variant-numeric:tabular-nums}
+.dlab{font:600 11.5px var(--mono);font-variant-numeric:tabular-nums}
+.band{fill:var(--ink);opacity:.055}
+.bandlab{font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;fill:var(--ink-3)}
+
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:440px}
+th,td{text-align:left;padding:9px 12px 9px 0;border-bottom:1px solid var(--line)}
+th{font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+td.n{font:14px var(--mono);font-variant-numeric:tabular-nums;text-align:right;padding-right:0}
+tr.hl td{color:var(--crit);font-weight:600}
+
+.pill{display:inline-block;font:600 10.5px/1 var(--mono);letter-spacing:.06em;
+  padding:4px 8px;border-radius:20px;border:1px solid}
+.pill.crit{color:var(--crit);border-color:var(--crit-line);background:var(--crit-bg)}
+.pill.ok{color:var(--ok);border-color:var(--ok-line);background:var(--ok-bg)}
+.pill.warn{color:var(--warn);border-color:var(--warn-line);background:var(--warn-bg)}
+
+.note{background:var(--surface-2);border-left:3px solid var(--line-2);
+  border-radius:0 8px 8px 0;padding:14px 16px;font-size:13.5px;color:var(--ink-2)}
+.note b{color:var(--ink)}
+.note p{margin:0 0 8px} .note p:last-child{margin:0}
+
+#tip{position:fixed;pointer-events:none;opacity:0;transition:opacity .1s;z-index:9;
+  background:var(--ground);border:1px solid var(--line-2);border-radius:8px;
+  padding:9px 11px;font:12.5px/1.5 var(--mono);font-variant-numeric:tabular-nums;
+  box-shadow:0 6px 20px rgba(0,0,0,.13);white-space:nowrap}
+#tip .r{display:flex;justify-content:space-between;gap:14px}
+#tip .r i{width:9px;height:3px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:3px}
+#tip b{color:var(--ink)} #tip .k{color:var(--ink-2)}
+
+footer{color:var(--ink-3);font-size:12.5px;line-height:1.6;border-top:1px solid var(--line);padding-top:18px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+
+<a href="/" style="display:inline-block;margin:0 0 18px;font:600 12px/1 var(--mono);letter-spacing:.06em;color:var(--ink-3);text-decoration:none">&larr; ALLE FLATER</a>
+
+
+<header>
+  <div class="rule"></div>
+  <p class="eyebrow">Feltdiagnose · Suzuki Diagnostic System v8.00</p>
+  <h1>Motoren er ikke feilmålt. Den er kald.</h1>
+  <div class="ident">
+    <span><b>Suzuki DF300</b> · 4028 cc · 300 PS</span>
+    <span>ECM <b>33920-98J00</b></span>
+    <span>Båt <b>Ibiza 24</b></span>
+    <span><b>477 t 46 min</b> driftstid</span>
+    <span>2. august 2026</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <span class="tag">Konklusjon</span>
+  <h2>Cylinder temp-sensoren rapporterer riktig. Kjølestrømmen reguleres ikke.</h2>
+  <p>Motoren stabiliserte seg på 40 °C på tomgang og falt ytterligere når turtallet
+     økte. Ved 416 driftstimer lå den på 60 °C under samme forhold. Mønsteret peker
+     mot termostat som står åpen, med sterkest utslag på PORT-banken.</p>
+</div>
+
+<section>
+  <p class="eyebrow">Nøkkeltall</p>
+  <div class="tiles">
+    <div class="tile bad">
+      <span class="lbl">Cylinder temp, tomgang</span>
+      <span class="val">40<span class="u">°C</span></span>
+      <span class="note">Var 60 °C ved 416 t. Falt 20 °C.</span>
+    </div>
+    <div class="tile bad">
+      <span class="lbl">Bankforskjell STBD–PORT</span>
+      <span class="val">15<span class="u">°C</span></span>
+      <span class="note">Var 1 °C ved 416 t. Bankene er ikke lenger i balanse.</span>
+    </div>
+    <div class="tile good">
+      <span class="lbl">Sensoravvik, kald motor</span>
+      <span class="val">&lt;1<span class="u">°C</span></span>
+      <span class="note">Alle fire følere enige ved 26 °C. Sensoren lyver ikke.</span>
+    </div>
+    <div class="tile warn">
+      <span class="lbl">Vanntrykksensor</span>
+      <span class="val">—</span>
+      <span class="note">Ikke montert. Fast 13 psi, utgang 4,98 V = 5 V-referansen.</span>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <p class="eyebrow">Beviset</p>
+  <h3>Temperatur mot turtall — hele logg 1</h3>
+  <p class="sub">757 sekunder fra kald start. Ved 655 s ble turtallet hevet i fri.
+     Alle tre motortemperaturene falt, og kom tilbake da turtallet gikk ned igjen.
+     Det er en reversibel respons på vannmengde — ikke en målefeil.</p>
+  <div class="legend">
+    <span><i style="background:var(--cyl)"></i>Cylinder temp</span>
+    <span><i style="background:var(--stbd)"></i>Ex-mani STBD</span>
+    <span><i style="background:var(--port)"></i>Ex-mani PORT</span>
+    <span><i style="background:var(--iat)"></i>Innsugsluft</span>
+    <span><i style="background:var(--rpm)"></i>Turtall</span>
+  </div>
+  <div class="scroll"><svg id="ts" width="1000" height="430" role="img"
+    aria-label="Temperaturer og turtall over 757 sekunder"></svg></div>
+</section>
+
+<section class="card">
+  <p class="eyebrow">Mot motorens egen historikk</p>
+  <h3>Hva den gjorde da den var frisk</h3>
+  <p class="sub">ECM-en lagrer frosne øyeblikksbilder ved hendelser. To av dem — ved 379 og
+     416 driftstimer — er fra tomgang med varm motor, samme situasjon som i dag.
+     De er den eneste dokumenterte referansen som gjelder nøyaktig denne motoren.</p>
+  <div class="scroll"><svg id="slope" width="760" height="290" role="img"
+    aria-label="Cylinder temp, STBD og PORT ved 379 t, 416 t og i dag"></svg></div>
+  <div class="scroll" style="margin-top:8px">
+  <table>
+    <thead><tr><th>Måling</th><th class="n">379 t</th><th class="n">416 t</th><th class="n">I dag · 477 t</th><th class="n">Endring</th></tr></thead>
+    <tbody>
+      <tr><td>Turtall</td><td class="n">531</td><td class="n">469</td><td class="n">656</td><td class="n">—</td></tr>
+      <tr class="hl"><td>Cylinder temp</td><td class="n">50 °C</td><td class="n">60 °C</td><td class="n">40 °C</td><td class="n">−20 °C</td></tr>
+      <tr><td>Ex-mani STBD</td><td class="n">52 °C</td><td class="n">59 °C</td><td class="n">50 °C</td><td class="n">−9 °C</td></tr>
+      <tr class="hl"><td>Ex-mani PORT</td><td class="n">50 °C</td><td class="n">58 °C</td><td class="n">35 °C</td><td class="n">−23 °C</td></tr>
+      <tr class="hl"><td>Bankforskjell</td><td class="n">2 °C</td><td class="n">1 °C</td><td class="n">15 °C</td><td class="n">+14 °C</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="card">
+  <p class="eyebrow">Hendelseshistorikk</p>
+  <h3>Fire daterte hendelser i 477 driftstimer</h3>
+  <p class="sub">Alle bærer driftstime-stempel, så de kan plasseres i tid.
+     Overopphetingen ved 187 t er forklart: tomgang på land med for lite vann fra hageslange.
+     ETV-feilen ved 175 t skjedde med 6,01 V batterispenning — den er spenningsutløst, ikke en reell spjeldfeil.</p>
+  <div class="scroll"><svg id="tl" width="920" height="180" role="img"
+    aria-label="Tidslinje over hendelser mot driftstimer"></svg></div>
+</section>
+
+<div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+<section class="card">
+  <p class="eyebrow">Bruksprofil</p>
+  <h3>Fordeling av 477 timer</h3>
+  <p class="sub">Motoren har tilbrakt mesteparten av livet under 2000 o/min.</p>
+  <div class="scroll"><svg id="hist" width="430" height="250" role="img"
+    aria-label="Driftstid fordelt på turtallsbånd"></svg></div>
+</section>
+
+<section class="card">
+  <p class="eyebrow">Feiltellere</p>
+  <h3>Alt som har slått ut</h3>
+  <p class="sub">Tellere med verdi null er utelatt — 25 av 34 står på null.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Teller</th><th class="n">Antall</th><th class="n">Vurdering</th></tr></thead>
+    <tbody>
+      <tr><td>Oljeskift-påminnelse</td><td class="n">63</td><td class="n"><span class="pill ok">rutine</span></td></tr>
+      <tr><td>Overturtall</td><td class="n">25</td><td class="n"><span class="pill warn">følg med</span></td></tr>
+      <tr><td>DBW systemfeil</td><td class="n">3</td><td class="n"><span class="pill warn">se ESA</span></td></tr>
+      <tr><td>ESA feil (motor)</td><td class="n">3</td><td class="n"><span class="pill warn">reell</span></td></tr>
+      <tr><td>ETV feil (motor)</td><td class="n">2</td><td class="n"><span class="pill ok">spenning</span></td></tr>
+      <tr><td>ESA feil (bevegelse)</td><td class="n">1</td><td class="n"><span class="pill warn">reell</span></td></tr>
+      <tr><td>ETV feil (bevegelse)</td><td class="n">1</td><td class="n"><span class="pill ok">spenning</span></td></tr>
+      <tr><td>Overoppheting (temp)</td><td class="n">1</td><td class="n"><span class="pill ok">forklart</span></td></tr>
+      <tr><td>CKP sensorfeil</td><td class="n">1</td><td class="n"><span class="pill ok">enkelt</span></td></tr>
+      <tr><td><b>Cyl. temp sensorfeil</b></td><td class="n"><b>0</b></td><td class="n"><span class="pill ok">aldri</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+</div>
+
+<section class="note">
+  <p><b>Neste steg.</b> Ta ut termostatene og test dem i varmt vann — de skal åpne
+     ved spesifisert temperatur og være tette under. Mistanken er sterkest på PORT-siden.</p>
+  <p><b>Ikke verifisert her:</b> antall termostater og åpningstemperatur for DF300 K7.
+     Den spesifikasjonen finnes ikke i datagrunnlaget for denne analysen og må slås
+     opp i verkstedhåndboka før deler bestilles.</p>
+  <p><b>Mangler fortsatt:</b> en logg fra normal kjøretur under last. Turen ble ikke
+     kjørt — diagnosen var stilt på tomgang. Verdt å ta som «etter»-måling når
+     termostatene er byttet.</p>
+</section>
+
+<footer>
+  <p>Grunnlag: <code>D3008021.enc</code> (192 parametere, Service Data ved 14:44) ·
+     <code>L3008021.csv</code> (3781 målinger à 0,2 s over 756 s) ·
+     18 MB USBPcap-fangst av 305 211 protokollpakker.
+     Alle tall er lest direkte fra motorens ECM. Historiske verdier er ECM-ens egne
+     frosne øyeblikksbilder, ikke rekonstruksjon.</p>
+</footer>
+
+</div>
+<div id="tip"></div>
+
+<script>
+const T=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513,514,515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581,582,583,584,585,586,587,588,589,590,591,592,593,594,595,596,597,598,599,600,601,602,603,604,605,606,607,608,609,610,611,612,613,614,615,616,617,618,619,620,621,622,623,624,625,626,627,628,629,630,631,632,633,634,635,636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653,654,655,656,657,658,659,660,661,662,663,664,665,666,667,668,669,670,671,672,673,674,675,676,677,678,679,680,681,682,683,684,685,686,687,688,689,690,691,692,693,694,695,696,697,698,699,700,701,702,703,704,705,706,707,708,709,710,711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729,730,731,732,733,734,735,736,737,738,739,740,741,742,743,744,745,746,747,748,749,750,751,752,753,754,755,756],RPM=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,125,2625,1375,875,656,531,656,719,750,813,781,781,750,719,750,719,750,750,719,719,719,719,719,688,719,719,656,688,688,719,688,688,688,688,688,688,719,688,688,688,688,688,719,688,688,719,719,688,688,719,688,688,688,688,719,688,688,688,719,719,688,688,688,688,688,688,688,688,688,656,688,719,688,656,656,688,688,688,688,688,656,688,656,688,656,688,688,656,656,656,688,688,688,688,688,656,656,656,656,656,688,688,688,688,688,688,688,688,688,688,656,656,656,656,688,688,656,656,656,656,656,656,656,656,656,656,688,688,656,688,656,656,688,656,656,656,688,688,688,688,656,656,688,688,656,688,688,688,656,656,688,656,656,656,656,625,688,688,688,656,656,688,656,688,656,688,656,656,688,656,656,688,688,688,688,688,688,656,688,656,656,688,688,688,688,625,688,688,688,656,688,688,688,656,688,688,688,688,656,656,688,688,688,656,688,656,688,688,656,688,688,688,688,656,656,688,688,656,688,656,656,625,688,688,688,688,688,688,656,688,656,656,688,688,656,656,656,688,688,688,688,688,656,656,688,688,688,688,688,625,688,656,688,656,656,688,688,688,688,656,688,688,656,688,688,688,656,656,656,688,656,656,656,688,656,688,688,688,688,688,656,688,688,688,688,688,625,656,656,656,688,656,656,656,688,688,688,656,656,656,688,719,656,656,656,656,656,688,688,688,688,656,688,688,688,656,656,656,688,656,688,656,656,688,656,656,688,656,656,656,656,656,688,688,688,656,688,656,625,688,656,688,688,688,656,688,656,656,688,688,688,656,688,656,688,656,656,688,656,688,656,656,719,688,688,688,656,656,656,656,688,656,688,656,688,688,688,688,688,688,656,688,688,656,688,656,688,656,688,656,688,656,688,656,656,656,656,688,656,656,656,688,688,656,688,656,688,688,688,656,656,688,656,688,688,688,688,656,688,656,688,656,656,688,688,688,688,688,688,656,688,656,656,688,688,656,688,656,688,688,688,688,656,688,688,656,688,656,656,656,688,656,656,656,656,688,656,688,656,688,688,688,688,688,656,656,656,688,656,656,688,656,656,656,688,688,688,688,719,781,844,1500,1406,1406,1406,1406,1406,1406,1406,1406,1406,1406,1438,1438,1406,1438,1406,1438,1438,1406,1406,1406,1438,1438,1438,1406,1438,1438,1406,1438,1438,1438,1406,1469,1438,1406,1406,1375,1406,1406,1438,1438,1438,1438,1438,1438,1406,1438,1438,1406,1438,1406,1281,688,688,656,688,688,688,656,688,688,688,656,688,688,688,656,656,688,688,688,656,688,656,688,656,688,688,656,688,688,688,688,688,656,656,656,656,656,656,656,656,656,656,656,656,656,656,688,656,656,656],CYL=[26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,27,26,26,26,26,26,27,26,26,26,26,26,26,26,26,26,27,26,26,26,26,27,26,27,27,27,27,27,27,27,27,27,27,26,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,28,28,28,28,28,28,28,28,29,29,29,29,29,29,29,30,30,30,30,30,30,30,30,31,31,31,31,31,31,31,31,31,32,32,32,32,32,32,32,32,32,32,33,33,33,33,33,33,33,33,33,33,33,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,39,39,39,39,39,39,39,39,39,39,39,39,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,41,41,41,41,41,41,41,41,41,41],IAT=[31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,31,31,30,30,30,30,30,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,32,31,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,31,31,31,31,31,32,31,31,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,32,32,31,31,32,32,32,32,32,32,32,32,31,32,32,31,31,31,31,31,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32],STBD=[26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,27,27,27,27,27,27,27,27,27,28,28,28,28,28,29,29,29,29,29,29,29,29,30,30,30,30,30,30,30,30,31,31,31,31,31,31,32,32,32,32,32,32,32,33,33,33,33,33,33,34,34,34,34,34,34,34,35,35,35,35,35,35,36,36,36,36,36,36,36,36,37,37,37,37,37,37,37,37,38,38,38,38,38,38,38,39,39,39,39,39,39,39,39,39,40,40,40,40,40,40,40,40,40,40,41,41,41,41,41,41,41,41,41,42,42,42,42,42,42,42,42,42,42,42,42,43,43,43,43,43,43,43,43,43,43,43,43,43,43,43,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,48,48,48,48,48,48,48,48,48,48,48,48,48,48,48,48,48,48,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,50,49,49,49,49,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,49,49,49,49,48,47,47,47,47,46,46,46,45,45,45,44,44,44,44,43,43,43,43,43,42,42,42,42,42,42,42,42,41,41,41,41,41,41,41,41,41,41,41,41,40,40,40,40,40,40,40,40,41,41,41,41,41,41,41,41,42,42,42,42,42,42,42,43,43,43,43,43,43,43,43,43,43,43,43,43,44,44,44,44,44,44,44,44,44,44,44,44,44,44],PORT=[27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,28,28,28,28,28,28,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,29,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,34,34,34,34,34,34,34,34,34,34,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,33,34,34,34,34,34,34,34,34,34,34,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35];
+
+const $=s=>document.querySelector(s);
+const NS="http://www.w3.org/2000/svg";
+function el(n,a){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function cs(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+/* ---------- hovedgraf: temperatur over turtall, delte paneler, felles x ---------- */
+function drawTS(){
+  const svg=$("#ts"); svg.textContent="";
+  const W=1000,L=46,R=58,TOP=14;
+  const HT=250, GAP=34, HR=76;               // temp-panel, mellomrom, rpm-panel
+  const x=t=>L+(t/756)*(W-L-R);
+  const tmin=20,tmax=56;
+  const yT=v=>TOP+HT-((v-tmin)/(tmax-tmin))*HT;
+  const rTop=TOP+HT+GAP, rmax=3000;
+  const yR=v=>rTop+HR-(v/rmax)*HR;
+
+  // turtallsvindu markert
+  svg.appendChild(el("rect",{x:x(648),y:TOP,width:x(714)-x(648),height:HT+GAP+HR,class:"band"}));
+  const bl=el("text",{x:x(648)+6,y:TOP+13,class:"bandlab"}); bl.textContent="Turtall hevet"; svg.appendChild(bl);
+
+  // rutenett + y-akse temp
+  for(let v=20;v<=55;v+=5){
+    svg.appendChild(el("line",{x1:L,y1:yT(v),x2:W-R,y2:yT(v),class:"gl"}));
+    const t=el("text",{x:L-9,y:yT(v)+4,class:"ax","text-anchor":"end"}); t.textContent=v; svg.appendChild(t);
+  }
+  const ul=el("text",{x:L-9,y:TOP-2,class:"ax","text-anchor":"end"}); ul.textContent="°C"; svg.appendChild(ul);
+
+  // rpm-panel
+  for(const v of [0,1500,3000]){
+    svg.appendChild(el("line",{x1:L,y1:yR(v),x2:W-R,y2:yR(v),class:"gl"}));
+    const t=el("text",{x:L-9,y:yR(v)+4,class:"ax","text-anchor":"end"}); t.textContent=v; svg.appendChild(t);
+  }
+  const rl=el("text",{x:L-9,y:rTop-4,class:"ax","text-anchor":"end"}); rl.textContent="o/min"; svg.appendChild(rl);
+
+  // x-akse
+  for(let s=0;s<=750;s+=150){
+    const t=el("text",{x:x(s),y:rTop+HR+18,class:"ax","text-anchor":"middle"});
+    t.textContent=(s/60).toFixed(0)+" min"; svg.appendChild(t);
+  }
+
+  const path=(arr,yf)=>arr.map((v,i)=>(i?"L":"M")+x(T[i]).toFixed(1)+" "+yf(v).toFixed(1)).join(" ");
+  // rpm som fylt areal — kontekst, ikke likeverdig serie
+  svg.appendChild(el("path",{d:path(RPM,yR)+`L${x(756)} ${yR(0)} L${x(0)} ${yR(0)} Z`,
+    fill:cs("--rpm"),opacity:".22",stroke:"none"}));
+  svg.appendChild(el("path",{d:path(RPM,yR),fill:"none",stroke:cs("--rpm"),"stroke-width":1.5}));
+
+  const series=[["CYL",CYL,"--cyl"],["STBD",STBD,"--stbd"],["PORT",PORT,"--port"],["IAT",IAT,"--iat"]];
+  for(const [n,a,c] of series)
+    svg.appendChild(el("path",{d:path(a,yT),fill:"none",stroke:cs(c),"stroke-width":2,
+      "stroke-linejoin":"round","stroke-linecap":"round"}));
+
+  // direkte etiketter — sekundærkoding, ikke farge alene
+  const lastY={};
+  for(const [n,a,c] of series) lastY[n]=yT(a[a.length-1]);
+  const order=Object.entries(lastY).sort((p,q)=>p[1]-q[1]);
+  let prev=-99;
+  for(const [n,yv] of order){
+    const y=Math.max(yv,prev+13); prev=y;
+    const c={CYL:"--cyl",STBD:"--stbd",PORT:"--port",IAT:"--iat"}[n];
+    const t=el("text",{x:W-R+7,y:y+4,class:"dlab",fill:cs(c)}); t.textContent=n; svg.appendChild(t);
+  }
+
+  // hover-lag
+  const hair=el("line",{x1:0,y1:TOP,x2:0,y2:rTop+HR,stroke:cs("--ink-3"),"stroke-width":1,opacity:0});
+  svg.appendChild(hair);
+  const dots=series.map(([n,a,c])=>{const d=el("circle",{r:4,fill:cs(c),stroke:cs("--surface"),
+    "stroke-width":2,opacity:0}); svg.appendChild(d); return d;});
+  const hit=el("rect",{x:L,y:TOP,width:W-L-R,height:HT+GAP+HR,fill:"transparent"});
+  svg.appendChild(hit);
+  const tip=$("#tip");
+  hit.addEventListener("pointermove",ev=>{
+    const b=svg.getBoundingClientRect();
+    const sx=(ev.clientX-b.left)*(W/b.width);
+    let i=Math.round(((sx-L)/(W-L-R))*756); i=Math.max(0,Math.min(756,i));
+    hair.setAttribute("x1",x(T[i])); hair.setAttribute("x2",x(T[i])); hair.setAttribute("opacity",.5);
+    series.forEach(([n,a,c],k)=>{dots[k].setAttribute("cx",x(T[i]));
+      dots[k].setAttribute("cy",yT(a[i])); dots[k].setAttribute("opacity",1);});
+    const mm=Math.floor(T[i]/60), ss=String(T[i]%60).padStart(2,"0");
+    tip.innerHTML=`<div class="r"><b>${mm}:${ss}</b><span class="k">${RPM[i]} o/min</span></div>`+
+      series.map(([n,a,c])=>`<div class="r"><span class="k"><i style="background:${cs(c)}"></i>${n}</span><b>${a[i]} °C</b></div>`).join("");
+    tip.style.opacity=1;
+    const tw=tip.offsetWidth;
+    tip.style.left=Math.min(ev.clientX+16,innerWidth-tw-10)+"px";
+    tip.style.top=Math.max(10,ev.clientY-tip.offsetHeight-12)+"px";
+  });
+  hit.addEventListener("pointerleave",()=>{tip.style.opacity=0;hair.setAttribute("opacity",0);
+    dots.forEach(d=>d.setAttribute("opacity",0));});
+}
+
+/* ---------- da mot nå ---------- */
+function drawSlope(){
+  const svg=$("#slope"); svg.textContent="";
+  const W=760,H=290,L=52,R=112,TOP=24,B=44;
+  const xs=[379,416,477], px=[L,L+(W-L-R)*.42,W-R];
+  const lo=30,hi=64, y=v=>TOP+(H-TOP-B)-((v-lo)/(hi-lo))*(H-TOP-B);
+  for(let v=30;v<=60;v+=10){
+    svg.appendChild(el("line",{x1:L,y1:y(v),x2:W-R,y2:y(v),class:"gl"}));
+    const t=el("text",{x:L-9,y:y(v)+4,class:"ax","text-anchor":"end"}); t.textContent=v+"°"; svg.appendChild(t);
+  }
+  xs.forEach((h,i)=>{
+    const t=el("text",{x:px[i],y:H-20,class:"ax","text-anchor":"middle"});
+    t.textContent=(i==2?"i dag · ":"")+h+" t"; svg.appendChild(t);
+  });
+  const rows=[["Cylinder temp",[50,60,40],"--cyl"],["Ex-mani STBD",[52,59,50],"--stbd"],["Ex-mani PORT",[50,58,35],"--port"]];
+  for(const [n,v,c] of rows){
+    svg.appendChild(el("path",{d:v.map((q,i)=>(i?"L":"M")+px[i]+" "+y(q)).join(" "),
+      fill:"none",stroke:cs(c),"stroke-width":2.5,"stroke-linejoin":"round"}));
+    v.forEach((q,i)=>{
+      svg.appendChild(el("circle",{cx:px[i],cy:y(q),r:5,fill:cs(c),stroke:cs("--surface"),"stroke-width":2}));
+      if(i!==1){const t=el("text",{x:px[i]+(i?10:-11),y:y(q)+4,class:"dlab",fill:cs(c),
+        "text-anchor":i?"start":"end"}); t.textContent=q+"°"; svg.appendChild(t);}
+    });
+    const lb=el("text",{x:W-R+30,y:y(v[2])+4,class:"dlab",fill:cs(c)}); lb.textContent=n; svg.appendChild(lb);
+  }
+}
+
+/* ---------- hendelsestidslinje ---------- */
+function drawTL(){
+  const svg=$("#tl"); svg.textContent="";
+  const W=920,L=20,R=20,Y=104;
+  const x=h=>L+(h/500)*(W-L-R);
+  svg.appendChild(el("line",{x1:L,y1:Y,x2:x(500),y2:Y,stroke:cs("--line-2"),"stroke-width":2}));
+  for(let h=0;h<=500;h+=100){
+    svg.appendChild(el("line",{x1:x(h),y1:Y-4,x2:x(h),y2:Y+4,stroke:cs("--line-2"),"stroke-width":2}));
+    const t=el("text",{x:x(h),y:Y+22,class:"ax","text-anchor":"middle"}); t.textContent=h+" t"; svg.appendChild(t);
+  }
+  svg.appendChild(el("rect",{x:x(477)-1.5,y:Y-58,width:3,height:58,fill:cs("--ink")}));
+  const nt=el("text",{x:x(477),y:Y-64,class:"dlab",fill:cs("--ink"),"text-anchor":"middle"});
+  nt.textContent="I dag · 477 t"; svg.appendChild(nt);
+  const ev=[
+    {h:175,n:"ETV feil",s:"6,01 V — spenning",c:"--ink-3",up:1},
+    {h:187,n:"Overoppheting",s:"hageslange, forklart",c:"--warn",up:0},
+    {h:379,n:"ESA feil",s:"reell",c:"--iat",up:1},
+    {h:416,n:"ESA feil",s:"reell",c:"--iat",up:0}
+  ];
+  for(const e of ev){
+    const col=cs(e.c), dy=e.up?-30:30;
+    svg.appendChild(el("line",{x1:x(e.h),y1:Y,x2:x(e.h),y2:Y+dy,stroke:col,"stroke-width":1.5}));
+    svg.appendChild(el("circle",{cx:x(e.h),cy:Y,r:5.5,fill:col,stroke:cs("--surface"),"stroke-width":2}));
+    const a=el("text",{x:x(e.h),y:Y+dy+(e.up?-4:14),class:"dlab",fill:col,"text-anchor":"middle"});
+    a.textContent=e.n; svg.appendChild(a);
+    const b=el("text",{x:x(e.h),y:Y+dy+(e.up?-18:28),class:"ax","text-anchor":"middle"});
+    b.textContent=e.s; svg.appendChild(b);
+  }
+}
+
+/* ---------- bruksprofil ---------- */
+function drawHist(){
+  const svg=$("#hist"); svg.textContent="";
+  const W=430,H=250,L=92,R=52,TOP=8;
+  const d=[["0–1000",9594],["1000–2000",13014],["2000–3000",1546],["3000–4000",3420],
+           ["4000–5000",926],["5000–6000",130],[">6000",36]];
+  const mx=13014, bh=24, gap=8;
+  d.forEach((r,i)=>{
+    const y=TOP+i*(bh+gap), w=Math.max(2,(r[1]/mx)*(W-L-R));
+    svg.appendChild(el("rect",{x:L,y:y,width:w,height:bh,rx:4,fill:cs("--stbd"),opacity:i<2?.95:.55}));
+    const lb=el("text",{x:L-10,y:y+bh/2+4,class:"ax","text-anchor":"end"}); lb.textContent=r[0]; svg.appendChild(lb);
+    const vl=el("text",{x:L+w+8,y:y+bh/2+4,class:"dlab",fill:cs("--ink-2")});
+    vl.textContent=(r[1]/60).toFixed(0)+" t"; svg.appendChild(vl);
+  });
+}
+
+function drawAll(){drawTS();drawSlope();drawTL();drawHist();}
+drawAll();
+matchMedia("(prefers-color-scheme:dark)").addEventListener("change",drawAll);
+new MutationObserver(drawAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+</script>
+
+<script src="/assets/js/offline.js" defer></script>
+</body>
+</html>

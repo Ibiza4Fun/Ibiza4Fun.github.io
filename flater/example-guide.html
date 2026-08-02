@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eksempelguide — slik ser en guide ut</title>
+<meta name="description" content="Malen for en guide: nummererte steg, avhuking som huskes, framdrift i toppen.">
+<meta name="theme-color" content="#0A0C10">
+
+<meta name="flate:kind" content="guide">
+<meta name="flate:date" content="2026-08-02">
+<meta name="flate:temporary" content="true">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/guide.css">
+</head>
+<body>
+
+<div class="gwrap">
+
+  <div class="gtop">
+    <a class="gback" href="/">&larr; alle flater</a>
+    <div class="gtitle">Eksempelguide — slik ser en guide ut</div>
+    <div class="progress">
+      <div class="bar"><span id="fill"></span></div>
+      <div class="ptext"><span id="pdone">0</span>/<span id="ptotal">5</span></div>
+    </div>
+  </div>
+
+  <p class="gintro">
+    Dette er malen, ikke en ekte prosedyre. Kopier fila, bytt tittel og steg, og
+    slett dette avsnittet. Trykk hvor som helst på et steg for å hake det av —
+    avhukingen ligger igjen på telefonen til du nullstiller.
+  </p>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">1</span>
+        <span class="stext">Ett steg er én handling.
+          <span class="snote">Skal du gjøre to ting, skriv to steg. Det er lettere å finne tilbake til riktig sted.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">2</span>
+        <span class="stext">Skriv det du skal gjøre, ikke det systemet heter.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">3</span>
+        <span class="stext">Legg det som kan gå galt i en merknad under steget.
+          <span class="snote">Slik som denne. Merknaden strykes ikke over når steget hakes av.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">4</span>
+        <span class="stext">Ta med hvordan du ser at steget faktisk lyktes.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">5</span>
+        <span class="stext">Si hva som skal skje hvis det ikke lyktes.
+          <span class="snote">En guide uten utvei stopper akkurat der du trenger den mest.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <div class="gfoot">
+    <button class="reset" type="button" id="reset">Nullstill</button>
+    <span>avhukingen huskes på denne telefonen</span>
+  </div>
+
+</div>
+
+<script src="/assets/js/guide.js" defer></script>
+<script src="/assets/js/offline.js" defer></script>
+</body>
+</html>

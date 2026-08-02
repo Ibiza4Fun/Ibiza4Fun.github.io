@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDS Feltprosedyre — DF300</title>
+<meta name="theme-color" content="#0A0C10">
+
+<meta name="flate:kind" content="guide">
+<meta name="flate:date" content="2026-08-02">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+</head>
+<body>
+
+<style>
+  :root{
+    --ground:#f1f5f6; --surface:#fff; --surface-2:#e7eef0; --line:#c9d7db;
+    --ink:#0d191e; --ink-2:#48606a; --ink-3:#7a919b;
+    --accent:#00707e; --accent-soft:#d3ecef; --accent-line:#8fcfd7;
+    --warn:#a85c15; --warn-soft:#fbeeda; --warn-line:#e6bd82;
+    --crit:#a82f29; --crit-soft:#fbe2e0; --crit-line:#e39d98;
+    --ok:#26703e;
+    --on-accent:#ffffff;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#0a1316; --surface:#111e23; --surface-2:#16262c; --line:#22363e;
+      --ink:#e4eef1; --ink-2:#9bb0b9; --ink-3:#68808b;
+      --accent:#39c4d6; --accent-soft:#0e3138; --accent-line:#1c5c68;
+      --warn:#eb9a44; --warn-soft:#372714; --warn-line:#6d4d20;
+      --crit:#f07068; --crit-soft:#381817; --crit-line:#6e2f2c;
+      --ok:#5fbb78; --on-accent:#07171b;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0a1316; --surface:#111e23; --surface-2:#16262c; --line:#22363e;
+    --ink:#e4eef1; --ink-2:#9bb0b9; --ink-3:#68808b;
+    --accent:#39c4d6; --accent-soft:#0e3138; --accent-line:#1c5c68;
+    --warn:#eb9a44; --warn-soft:#372714; --warn-line:#6d4d20;
+    --crit:#f07068; --crit-soft:#381817; --crit-line:#6e2f2c;
+    --ok:#5fbb78; --on-accent:#07171b;
+  }
+  :root[data-theme="light"]{
+    --ground:#f1f5f6; --surface:#fff; --surface-2:#e7eef0; --line:#c9d7db;
+    --ink:#0d191e; --ink-2:#48606a; --ink-3:#7a919b;
+    --accent:#00707e; --accent-soft:#d3ecef; --accent-line:#8fcfd7;
+    --warn:#a85c15; --warn-soft:#fbeeda; --warn-line:#e6bd82;
+    --crit:#a82f29; --crit-soft:#fbe2e0; --crit-line:#e39d98;
+    --ok:#26703e; --on-accent:#ffffff;
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);
+       font:16.5px/1.5 var(--sans);-webkit-text-size-adjust:100%}
+  .wrap{max-width:600px;margin:0 auto;padding:0 16px 70px}
+
+  header{padding:24px 0 16px}
+  .kicker{font:600 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;
+          color:var(--accent);margin-bottom:8px}
+  h1{font-size:23px;line-height:1.15;margin:0 0 5px;letter-spacing:-.015em}
+  .lede{color:var(--ink-2);font-size:14px;margin:0}
+
+  .bar{position:sticky;top:0;z-index:20;background:var(--ground);
+       padding:9px 0 8px;border-bottom:1px solid var(--line);
+       display:flex;align-items:center;gap:11px}
+  .track{flex:1;height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--accent);transition:width .3s ease}
+  .cnt{font:600 12px/1 var(--mono);color:var(--ink-2);font-variant-numeric:tabular-nums}
+
+  section{margin-top:26px}
+  .shead{display:flex;align-items:baseline;gap:9px;margin-bottom:10px}
+  .snum{font:700 12px/1 var(--mono);color:var(--accent)}
+  .shead h2{font-size:14.5px;margin:0;letter-spacing:.04em;text-transform:uppercase;
+            font-weight:700}
+
+  .steps{display:flex;flex-direction:column;gap:8px}
+  .step{display:flex;gap:11px;background:var(--surface);border:1px solid var(--line);
+        border-radius:9px;padding:12px 13px;cursor:pointer;align-items:flex-start;
+        transition:border-color .15s,background .15s}
+  .step:hover{border-color:var(--accent-line)}
+  .step:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .box{flex:none;width:22px;height:22px;border:1.5px solid var(--ink-3);border-radius:5px;
+       display:grid;place-items:center;margin-top:1px;transition:.15s}
+  .box svg{width:13px;height:13px;opacity:0;transform:scale(.6);transition:.18s}
+  .step.done{background:var(--surface-2)}
+  .step.done .box{background:var(--ok);border-color:var(--ok)}
+  .step.done .box svg{opacity:1;transform:scale(1)}
+  .step.done .txt{color:var(--ink-3);text-decoration:line-through}
+  .txt{flex:1}
+  .txt b{font-weight:650}
+  .sub{display:block;font-size:13px;color:var(--ink-2);margin-top:2px}
+  .step.done .sub{color:var(--ink-3)}
+  .opt{display:inline-block;font:600 9.5px/1 var(--mono);letter-spacing:.09em;
+       text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);
+       padding:3px 6px;border-radius:4px;margin-right:6px;vertical-align:1px}
+  code{font:13px var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:4px}
+
+  .alert{border-radius:9px;padding:13px 14px;margin:12px 0;border:1px solid}
+  .alert.warn{background:var(--warn-soft);border-color:var(--warn-line)}
+  .alert.crit{background:var(--crit-soft);border-color:var(--crit-line)}
+  .alabel{font:700 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+          display:block;margin-bottom:6px}
+  .alert.warn .alabel{color:var(--warn)}
+  .alert.crit .alabel{color:var(--crit)}
+  .alert p{margin:0;font-size:14px}
+  .alert p+p{margin-top:7px}
+
+  .phase{background:var(--surface);border:1px solid var(--line);border-radius:9px;
+         padding:11px 13px;display:flex;align-items:center;gap:12px}
+  .phase.run{border-color:var(--accent);background:var(--accent-soft)}
+  .phase.fin{background:var(--surface-2)}
+  .pinfo{flex:1;min-width:0}
+  .pname{font-weight:650;font-size:14.5px}
+  .ptarget{font-size:12.5px;color:var(--ink-2)}
+  .clock{font:600 18px/1 var(--mono);font-variant-numeric:tabular-nums;
+         min-width:58px;text-align:right;color:var(--ink-2)}
+  .phase.run .clock{color:var(--accent)}
+  .phase.fin .clock{color:var(--ok)}
+  .pbtn{flex:none;border:1px solid var(--accent);background:transparent;color:var(--accent);
+        font:600 12.5px var(--sans);padding:8px 12px;border-radius:6px;cursor:pointer;
+        min-width:62px}
+  .phase.run .pbtn{background:var(--accent);color:var(--on-accent)}
+  .pbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);
+       font:600 13.5px var(--sans);padding:10px 15px;border-radius:7px;cursor:pointer;
+       margin-top:14px}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);
+         font-size:12.5px;color:var(--ink-3)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<a href="/" style="display:inline-block;margin:0 0 18px;font:600 12px/1 var(--mono);letter-spacing:.06em;color:var(--ink-3);text-decoration:none">&larr; ALLE FLATER</a>
+
+
+<header>
+  <div class="kicker">Suzuki DF300 K7</div>
+  <h1>SDS-diagnoseøkt</h1>
+  <p class="lede">Fire lagringer. Ingenting skal noteres &mdash; Claude leser filene
+     direkte fra laptopen.</p>
+</header>
+
+<div class="bar">
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <div class="cnt" id="cnt">0 / 0</div>
+</div>
+
+<section>
+  <div class="shead"><span class="snum">01</span><h2>Ta med</h2></div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Laptop fulladet</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>SDS-kabel</b><span class="sub">USB → adapter → 4-pins kontakt</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Motorbatteriet fulladet</b></span></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">02</span><h2>Rigg &mdash; motoren kald</h2></div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Girspaken i NØYTRAL</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Motordeksel av</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Koble 4-pins til motoren, USB til PC</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><span class="opt">valgfritt</span><b>Start Wireshark-fangst</b><span class="sub">Må skje før SDS startes</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Tenning PÅ &mdash; ikke start motoren</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Start SDS → trykk «Reset»</b><span class="sub">Ikke «OK»</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Bekreft at Main Menu(F1) virker</b><span class="sub">Grå meny = ingen kontakt. Sjekk tenning, kabel, COM1</span></span></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">03</span><h2>Kald referanse &mdash; lagring 1</h2></div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>SERVICE DATA → <code>All Service Data</code></b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Save(F3) → OK → Save</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Skriv «lagret» til Claude</b><span class="sub">Han dekoder fila og svarer på sekunder</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Fotografer feiltellerne</b><span class="sub">Gruppe <code>Caution Sys. Info</code> &mdash; havner ikke i fila</span></span></div>
+  </div>
+  <div class="alert warn">
+    <span class="alabel">Kan avgjøre saken her</span>
+    <p>Spriker cylinder temp 5&ndash;8 °C fra eksossensorene på en kald motor, er det
+       sensoren &mdash; og du slipper å kjøre turen. Claude sier fra.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">04</span><h2>Data Logger &mdash; oppsett</h2></div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Lukk Service Data → DATA LOGGER</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Setup → Logging time <code>75 min</code></b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Huk av seks kanaler</b><span class="sub">Engine speed · Cylinder temp · Ex-mani STBD · Ex-mani PORT · Oil temp <em>eller</em> Intake air temp · Manifold abs. pressure</span></span></div>
+  </div>
+  <div class="alert crit">
+    <span class="alabel">Vanligste feil</span>
+    <p><b>«Monitor» logger ingenting.</b> Det er <b>«Go»</b> som starter loggingen.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">05</span><h2>Logg 1: kaldstart &mdash; lagring 2</h2></div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Monitor → Go</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Sjekk at tidtelleren løper</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Vent 1&ndash;2 min med motoren av</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Start motoren</b></span></div>
+  </div>
+  <div class="phase" data-target="300" style="margin-top:10px">
+    <div class="pinfo"><div class="pname">Tomgang</div><div class="ptarget">5 min</div></div>
+    <div class="clock">0:00</div><button class="pbtn">Start</button>
+  </div>
+  <div class="steps" style="margin-top:10px">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Stop → Save(F3) → OK → Save</b><span class="sub">Sikrer kaldstarten</span></span></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">06</span><h2>Logg 2: kjøretur</h2></div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Setup → samme seks → Monitor → Go</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Sjekk at tidtelleren løper</b></span></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+    <div class="phase" data-target="300"><div class="pinfo"><div class="pname">5 knop</div><div class="ptarget">5 min</div></div><div class="clock">0:00</div><button class="pbtn">Start</button></div>
+    <div class="phase" data-target="300"><div class="pinfo"><div class="pname">2000&ndash;2500 rpm</div><div class="ptarget">5 min</div></div><div class="clock">0:00</div><button class="pbtn">Start</button></div>
+    <div class="phase" data-target="900"><div class="pinfo"><div class="pname">Marsjfart</div><div class="ptarget">15 min · viktigst</div></div><div class="clock">0:00</div><button class="pbtn">Start</button></div>
+    <div class="phase" data-target="180"><div class="pinfo"><div class="pname">3500&ndash;4000 rpm</div><div class="ptarget">3 min</div></div><div class="clock">0:00</div><button class="pbtn">Start</button></div>
+    <div class="phase" data-target="300"><div class="pinfo"><div class="pname">Tilbake 5 knop</div><div class="ptarget">5 min</div></div><div class="clock">0:00</div><button class="pbtn">Start</button></div>
+    <div class="phase" data-target="180"><div class="pinfo"><div class="pname">Tomgang v/kai</div><div class="ptarget">3 min</div></div><div class="clock">0:00</div><button class="pbtn">Start</button></div>
+  </div>
+  <div class="alert warn">
+    <span class="alabel">Se på skjermen etter 10 min</span>
+    <p><b>43&ndash;50 °C</b> → feilen opptrer, kjør som planlagt.<br>
+       <b>~57 °C</b> → feilen opptrer ikke i dag. Kjør likevel ferdig; loggen blir
+       referansen for en normal tur.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">07</span><h2>Avslutning &mdash; lagring 3 og 4</h2></div>
+  <div class="alert crit">
+    <span class="alabel">La motoren gå</span>
+    <p>Loggfila finnes ikke før du har trykket Save. Stopper du motoren først,
+       mister du hele turen.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Stop → Save(F3) → OK → Save</b><span class="sub">Lagring 3</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>SERVICE DATA → <code>All Service Data</code> → Save(F3)</b><span class="sub">Lagring 4 &mdash; varm referanse</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Nå kan motoren stoppes</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><span class="opt">valgfritt</span><b>Stopp Wireshark og lagre</b></span></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">08</span><h2>Før du drar</h2></div>
+  <div class="steps">
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Si omtrentlig lufttemperatur til Claude</b><span class="sub">Kontroll mot sensorene &mdash; avslører jordfeil</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><span class="opt">grovtest</span><b>Kjenn med håndbaken nær topplokket</b><span class="sub">44 °C tåles lenge, 63 °C svir straks. Ikke ta på eksosdeler</span></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Be Claude bekrefte at alle fire filene finnes</b></span></div>
+    <div class="step"><span class="box">{{CHK}}</span><span class="txt"><b>Koble fra og sett på dekselet</b></span></div>
+  </div>
+  <button class="btn" id="reset">Nullstill for ny økt</button>
+</section>
+
+<footer>Data Logger går uovervåket i tre kvarter. Du rører den ikke.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var CHK='<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" '+
+          'stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 5"/></svg>';
+  document.querySelectorAll('.box').forEach(function(b){
+    if(b.textContent.trim()==='{{CHK}}') b.innerHTML=CHK;
+  });
+
+  var KEY='sds-felt-v3', st={};
+  try{ st=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ st={}; }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} }
+
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  steps.forEach(function(el,i){
+    var id='s'+i;
+    el.setAttribute('tabindex','0');
+    el.setAttribute('role','checkbox');
+    if(st[id]) el.classList.add('done');
+    el.setAttribute('aria-checked',st[id]?'true':'false');
+    function toggle(){
+      var on=!el.classList.contains('done');
+      el.classList.toggle('done',on);
+      el.setAttribute('aria-checked',on?'true':'false');
+      st[id]=on; save(); prog();
+    }
+    el.addEventListener('click',toggle);
+    el.addEventListener('keydown',function(e){
+      if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggle(); }
+    });
+  });
+
+  function prog(){
+    var d=document.querySelectorAll('.step.done').length;
+    document.getElementById('fill').style.width=(steps.length?d/steps.length*100:0)+'%';
+    document.getElementById('cnt').textContent=d+' / '+steps.length;
+  }
+  prog();
+
+  function fmt(s){ var m=Math.floor(s/60); return m+':'+String(s%60).padStart(2,'0'); }
+  [].slice.call(document.querySelectorAll('.phase')).forEach(function(p,i){
+    var key='p'+i, target=parseInt(p.dataset.target,10)||0;
+    var clock=p.querySelector('.clock'), btn=p.querySelector('.pbtn'), tick=null;
+    function paint(){
+      var d=st[key]||{};
+      var el=d.start?Math.floor((Date.now()-d.start)/1000):(d.acc||0);
+      clock.textContent=fmt(el);
+      p.classList.toggle('run',!!d.start);
+      p.classList.toggle('fin',!d.start&&el>0);
+      btn.textContent=d.start?'Stopp':(el>0?'Igjen':'Start');
+      if(target&&el>=target&&d.start) clock.style.color='var(--ok)';
+    }
+    function loop(){ if(tick)clearInterval(tick); if((st[key]||{}).start) tick=setInterval(paint,1000); }
+    btn.addEventListener('click',function(){
+      var d=st[key]||{};
+      st[key]=d.start?{acc:Math.floor((Date.now()-d.start)/1000)}:{start:Date.now()};
+      save(); paint(); loop();
+    });
+    paint(); loop();
+  });
+
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('Nullstille alt?')) return;
+    st={}; save(); location.reload();
+  });
+})();
+</script>
+
+<script src="/assets/js/offline.js" defer></script>
+</body>
+</html>

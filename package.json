@@ -1,0 +1,15 @@
+{
+  "name": "ibiza4fun-github-io",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static surfaces published for access from anywhere, phone first.",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node build.mjs --check",
+    "serve": "npx --yes serve ."
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

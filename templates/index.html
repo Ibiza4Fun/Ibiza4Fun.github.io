@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ibiza4fun.github.io</title>
+<meta name="description" content="Flater bygget lokalt og lagt ut for å nås utenfra. Guider, mockups, tester og rapporter.">
+<meta name="theme-color" content="#0A0C10">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ibiza4fun.github.io">
+<meta property="og:title" content="Laget lokalt. Tilgjengelig ute.">
+<meta property="og:description" content="Flater bygget lokalt og lagt ut for å nås utenfra. Guider, mockups, tester og rapporter.">
+<meta property="og:url" content="https://ibiza4fun.github.io/">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ibiza4fun.github.io/">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">ibiza4fun.github.io</div>
+    <h1>Laget lokalt. <em>Tilgjengelig ute.</em></h1>
+    <div class="status">
+      <span class="dot" aria-hidden="true"></span>
+      <span>{{TOTAL}} flater · {{GUIDES}} guider virker uten dekning · alt kan slettes igjen</span>
+    </div>
+  </header>
+
+  <div class="controls" role="group" aria-label="Filtrer på type">
+{{CHIPS}}
+    <span class="count"><span id="shown">{{TOTAL}}</span>/{{TOTAL}}</span>
+  </div>
+
+  <ul class="grid" id="grid">
+{{CARDS}}
+  </ul>
+
+  <p class="empty" id="empty" hidden>Ingen flater av den typen.</p>
+
+  <footer>
+    <span>Statiske filer på GitHub Pages · ingen sporing · ingen informasjonskapsler</span>
+    <span>Bygget {{BUILT}}</span>
+  </footer>
+
+</div>
+
+<script src="/assets/js/art.js" defer></script>
+<script src="/assets/js/index.js" defer></script>
+<script src="/assets/js/offline.js" defer></script>
+</body>
+</html>
