@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="flate:kind" content="rapport">
+<meta name="flate:date" content="2026-08-10">
+<title>Ledige oppkjøringstimer klasse BE — kartlegging</title>
+
+<style>
+  :root {
+    color-scheme: light dark;
+
+    /* Asfalt og betong — nøytraler med et kaldt drag mot blågrønt */
+    --ground:      #EFF1EE;
+    --surface:     #FFFFFF;
+    --surface-alt: #F6F7F4;
+    --line:        #D6DAD4;
+    --line-strong: #B4BAB2;
+    --ink:         #14181B;
+    --ink-soft:    #545C58;
+    --ink-faint:   #7C847E;
+
+    /* Aksent: vegoppmerking, dempet ned til noe man tåler å se på */
+    --accent:      #C98A00;
+    --accent-soft: #F5E6BE;
+
+    /* Status */
+    --ok:        #2C6A4A;
+    --ok-bg:     #E1EFE6;
+    --warn:      #9A6612;
+    --warn-bg:   #F7EBD5;
+    --none:      #8A3231;
+    --none-bg:   #F5E4E2;
+
+    --radius: 3px;
+
+    --font-display: "Arial Narrow", "Helvetica Neue Condensed", "Liberation Sans Narrow", system-ui, sans-serif;
+    --font-body: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    --font-data: "Cascadia Mono", Consolas, ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #12161A;
+      --surface:     #1A1F24;
+      --surface-alt: #21272C;
+      --line:        #2E353B;
+      --line-strong: #454E55;
+      --ink:         #E7EAE6;
+      --ink-soft:    #A8B0AB;
+      --ink-faint:   #7C857F;
+
+      --accent:      #E5B341;
+      --accent-soft: #3A2F13;
+
+      --ok:        #7FC69C;
+      --ok-bg:     #1B2E24;
+      --warn:      #DDA94F;
+      --warn-bg:   #322718;
+      --none:      #E08683;
+      --none-bg:   #34201F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #12161A;
+    --surface:     #1A1F24;
+    --surface-alt: #21272C;
+    --line:        #2E353B;
+    --line-strong: #454E55;
+    --ink:         #E7EAE6;
+    --ink-soft:    #A8B0AB;
+    --ink-faint:   #7C857F;
+
+    --accent:      #E5B341;
+    --accent-soft: #3A2F13;
+
+    --ok:        #7FC69C;
+    --ok-bg:     #1B2E24;
+    --warn:      #DDA94F;
+    --warn-bg:   #322718;
+    --none:      #E08683;
+    --none-bg:   #34201F;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  /* ---------- Topp ---------- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+  }
+
+  .eyebrow .mark { color: var(--accent); }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 6vw, 3.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.005em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    margin: 0;
+    max-width: 48ch;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+  }
+
+  /* ---------- Konklusjon ---------- */
+
+  .verdict {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--ok);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .verdict h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin: 0;
+    letter-spacing: 0.005em;
+  }
+
+  .verdict p { margin: 0; color: var(--ink-soft); max-width: 64ch; }
+
+  /* ---------- Nøkkeltall ---------- */
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1rem;
+  }
+
+  .tile {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .tile .num {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tile .num.hit  { color: var(--ok); }
+  .tile .num.zero { color: var(--none); }
+  .tile .unit { font-size: 1.3rem; }
+
+  .tile .label {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    max-width: 26ch;
+  }
+
+  /* ---------- Seksjoner ---------- */
+
+  section { display: flex; flex-direction: column; gap: 1rem; }
+
+  h2.section-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line-strong);
+    letter-spacing: 0.01em;
+  }
+
+  .note { margin: 0; color: var(--ink-soft); font-size: 0.92rem; max-width: 70ch; }
+
+  /* ---------- Tidslinje ---------- */
+
+  .timeline {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.2rem 1rem;
+    overflow-x: auto;
+  }
+
+  .days {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(1.9rem, 1fr);
+    gap: 3px;
+    min-width: 46rem;
+  }
+
+  .day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.45rem 0 0.4rem;
+    border-radius: 2px;
+    background: var(--surface-alt);
+    border: 1px solid transparent;
+  }
+
+  .day .dow {
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .day .dnum {
+    font-family: var(--font-data);
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .day.weekend { opacity: 0.4; }
+
+  .day.hit {
+    background: var(--ok-bg);
+    border-color: var(--ok);
+    opacity: 1;
+  }
+
+  .day.hit .dnum { color: var(--ok); font-weight: 700; }
+  .day.hit .dow  { color: var(--ok); }
+
+  .day.flagged {
+    background: var(--warn-bg);
+    border-color: var(--warn);
+    opacity: 1;
+  }
+
+  .day.flagged .dnum { color: var(--warn); font-weight: 700; }
+  .day.flagged .dow  { color: var(--warn); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+  }
+
+  .legend span { display: flex; align-items: center; gap: 0.4rem; }
+
+  .swatch {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+    flex: none;
+  }
+
+  .swatch.ok      { color: var(--ok);   background: var(--ok-bg); }
+  .swatch.flagged { color: var(--warn); background: var(--warn-bg); }
+  .swatch.plain   { color: var(--line-strong); background: var(--surface-alt); }
+
+  /* ---------- Tabeller ---------- */
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  table { border-collapse: collapse; width: 100%; min-width: 38rem; }
+
+  th {
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 400;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--line-strong);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .station { font-weight: 600; }
+  .station small { display: block; font-weight: 400; color: var(--ink-faint); font-size: 0.8rem; }
+
+  .drive, .slot, .datecell {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .drive { color: var(--ink-soft); }
+  .slot  { font-size: 0.9rem; }
+
+  .chip {
+    display: inline-block;
+    font-size: 0.78rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    border: 1px solid currentColor;
+  }
+
+  .chip.none { color: var(--none); background: var(--none-bg); }
+  .chip.ok   { color: var(--ok);   background: var(--ok-bg); }
+  .chip.warn { color: var(--warn); background: var(--warn-bg); }
+
+  tr.highlight td { background: var(--ok-bg); }
+  tr.flagged-row td { background: var(--warn-bg); }
+
+  /* ---------- Metode ---------- */
+
+  .method {
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .method h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .method ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .method li { color: var(--ink-soft); font-size: 0.92rem; max-width: 74ch; }
+  .method strong { color: var(--ink); }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.2rem;
+    color: var(--ink-faint);
+    font-size: 0.82rem;
+    max-width: 74ch;
+  }
+
+  a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span class="mark">Klasse BE — tilhenger inntil 3500 kg</span>
+      <span>Kartlagt 10. august 2026</span>
+      <span>Utgangspunkt: Blommenholm</span>
+    </div>
+    <h1>Ledige oppkjøringstimer 20. august – 18. september</h1>
+    <p class="standfirst">
+      Alle trafikkstasjoner innenfor rimelig kjøreavstand, sjekket mot det utvidede vinduet.
+      Sju datoer har ledig time — men de fleste ligger før du er ferdig utlært.
+    </p>
+  </header>
+
+  <div class="verdict">
+    <h2>Sju datoer med ledig time — én av dem 30 minutter unna</h2>
+    <p>
+      Drammen har lørdag 22. august kl. 10:50, den klart nærmeste. Resten ligger mellom
+      én og halvannen time unna. Oslo-området har fortsatt ingenting før 12. oktober.
+      Merk at fem av de sju datoene faller før siste kjøretime din 28. august.
+    </p>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <span class="num hit">7</span>
+      <span class="label">datoer med ledig time i vinduet 20.08–18.09</span>
+    </div>
+    <div class="tile">
+      <span class="num">30<span class="unit"> min</span></span>
+      <span class="label">til nærmeste treff — Drammen, lørdag 22. august</span>
+    </div>
+    <div class="tile">
+      <span class="num zero">0</span>
+      <span class="label">ledige timer i Oslo-området før 12. oktober</span>
+    </div>
+    <div class="tile">
+      <span class="num">1 340<span class="unit"> kr</span></span>
+      <span class="label">gebyr for oppkjøring, bindende etter avbestillingsfristen</span>
+    </div>
+  </div>
+
+  <section>
+    <h2 class="section-title">Vinduet dag for dag</h2>
+    <p class="note">
+      Fra 20. august til siste mulige prøvedato 18. september. Grønne dager har ledig time
+      og ligger etter siste kjøretime. Gule dager har ledig time, men faller før 28. august —
+      da er den obligatoriske BE-opplæringen din trolig ikke ferdig registrert ennå.
+    </p>
+    <div class="timeline">
+      <div class="days">
+        <div class="day flagged" title="Kongsvinger-området"><span class="dow">tor</span><span class="dnum">20</span></div>
+        <div class="day flagged" title="Tønsberg og Kongsvinger-området"><span class="dow">fre</span><span class="dnum">21</span></div>
+        <div class="day flagged" title="Drammen kl. 10:50 — lørdag"><span class="dow">lør</span><span class="dnum">22</span></div>
+        <div class="day weekend"><span class="dow">søn</span><span class="dnum">23</span></div>
+        <div class="day flagged" title="Mysen eller Hafslund"><span class="dow">man</span><span class="dnum">24</span></div>
+        <div class="day"><span class="dow">tir</span><span class="dnum">25</span></div>
+        <div class="day flagged" title="Kongsvinger-området"><span class="dow">ons</span><span class="dnum">26</span></div>
+        <div class="day"><span class="dow">tor</span><span class="dnum">27</span></div>
+        <div class="day hit" title="Mysen eller Hafslund — samme dag som siste kjøretime"><span class="dow">fre</span><span class="dnum">28</span></div>
+        <div class="day weekend"><span class="dow">lør</span><span class="dnum">29</span></div>
+        <div class="day weekend"><span class="dow">søn</span><span class="dnum">30</span></div>
+        <div class="day"><span class="dow">man</span><span class="dnum">31</span></div>
+        <div class="day"><span class="dow">tir</span><span class="dnum">1</span></div>
+        <div class="day"><span class="dow">ons</span><span class="dnum">2</span></div>
+        <div class="day"><span class="dow">tor</span><span class="dnum">3</span></div>
+        <div class="day"><span class="dow">fre</span><span class="dnum">4</span></div>
+        <div class="day weekend"><span class="dow">lør</span><span class="dnum">5</span></div>
+        <div class="day weekend"><span class="dow">søn</span><span class="dnum">6</span></div>
+        <div class="day"><span class="dow">man</span><span class="dnum">7</span></div>
+        <div class="day"><span class="dow">tir</span><span class="dnum">8</span></div>
+        <div class="day"><span class="dow">ons</span><span class="dnum">9</span></div>
+        <div class="day"><span class="dow">tor</span><span class="dnum">10</span></div>
+        <div class="day"><span class="dow">fre</span><span class="dnum">11</span></div>
+        <div class="day weekend"><span class="dow">lør</span><span class="dnum">12</span></div>
+        <div class="day weekend"><span class="dow">søn</span><span class="dnum">13</span></div>
+        <div class="day"><span class="dow">man</span><span class="dnum">14</span></div>
+        <div class="day"><span class="dow">tir</span><span class="dnum">15</span></div>
+        <div class="day hit" title="Mysen og Kongsvinger — kl. 08:10 og 10:50"><span class="dow">ons</span><span class="dnum">16</span></div>
+        <div class="day"><span class="dow">tor</span><span class="dnum">17</span></div>
+        <div class="day"><span class="dow">fre</span><span class="dnum">18</span></div>
+      </div>
+      <div class="legend">
+        <span><i class="swatch ok"></i> Ledig, etter siste kjøretime</span>
+        <span><i class="swatch flagged"></i> Ledig, men før 28. august</span>
+        <span><i class="swatch plain"></i> Ingen ledig time</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Treffene, sortert etter avstand</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Trafikkstasjon</th>
+            <th>Est. kjøretid</th>
+            <th>Dato</th>
+            <th>Tidspunkt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="flagged-row">
+            <td class="station">Drammen <small>Buskerud</small></td>
+            <td class="drive">~30 min</td>
+            <td class="datecell">lør 22. aug</td>
+            <td class="slot">10:50</td>
+          </tr>
+          <tr class="flagged-row">
+            <td class="station">Tønsberg <small>Vestfold</small></td>
+            <td class="drive">~1 t 05</td>
+            <td class="datecell">fre 21. aug</td>
+            <td class="slot">ikke hentet</td>
+          </tr>
+          <tr class="flagged-row">
+            <td class="station">Mysen eller Hafslund <small>Østfold</small></td>
+            <td class="drive">~1 t 15</td>
+            <td class="datecell">man 24. aug</td>
+            <td class="slot">ikke hentet</td>
+          </tr>
+          <tr class="highlight">
+            <td class="station">Mysen eller Hafslund <small>Østfold</small></td>
+            <td class="drive">~1 t 15</td>
+            <td class="datecell">fre 28. aug</td>
+            <td class="slot">ikke hentet</td>
+          </tr>
+          <tr class="highlight">
+            <td class="station">Mysen <small>Indre Østfold</small></td>
+            <td class="drive">~1 t 15</td>
+            <td class="datecell">ons 16. sept</td>
+            <td class="slot">08:10 · 10:50</td>
+          </tr>
+          <tr class="flagged-row">
+            <td class="station">Kongsvinger-området <small>Innlandet</small></td>
+            <td class="drive">~1 t 25</td>
+            <td class="datecell">tor 20., fre 21., ons 26. aug</td>
+            <td class="slot">ikke hentet</td>
+          </tr>
+          <tr class="highlight">
+            <td class="station">Kongsvinger <small>Innlandet</small></td>
+            <td class="drive">~1 t 25</td>
+            <td class="datecell">ons 16. sept</td>
+            <td class="slot">08:10 · 10:50</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">
+      «Kongsvinger-området» betyr at datoen kom fram i et samlet søk på Kongsvinger, Hamar og
+      Gjøvik, uten at systemet oppgir hvilken av dem den tilhører. Kun 16. september er bekreftet
+      å være Kongsvinger. Det samme gjelder Mysen og Hafslund, som ble søkt opp sammen.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Stasjoner uten ledig time i vinduet</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Trafikkstasjon</th>
+            <th>Est. kjøretid</th>
+            <th>Status</th>
+            <th>Nærmeste ledige time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="station">Billingstad <small>Asker</small></td>
+            <td class="drive">~10 min</td>
+            <td><span class="chip none">Ingen</span></td>
+            <td class="slot">12. okt, kl. 12:40</td>
+          </tr>
+          <tr>
+            <td class="station">Risløkka <small>Oslo</small></td>
+            <td class="drive">~20 min</td>
+            <td><span class="chip none">Ingen</span></td>
+            <td class="slot">12.–16. okt</td>
+          </tr>
+          <tr>
+            <td class="station">Lillestrøm <small>Akershus</small></td>
+            <td class="drive">~35 min</td>
+            <td><span class="chip none">Ingen</span></td>
+            <td class="slot">12.–16. okt</td>
+          </tr>
+          <tr>
+            <td class="station">Drøbak <small>Akershus</small></td>
+            <td class="drive">~40 min</td>
+            <td><span class="chip none">Ingen</span></td>
+            <td class="slot">Ingen ledige timer overhodet</td>
+          </tr>
+          <tr>
+            <td class="station">Hønefoss <small>Buskerud</small></td>
+            <td class="drive">~55 min</td>
+            <td><span class="chip none">Ingen</span></td>
+            <td class="slot">17. aug — før vinduet</td>
+          </tr>
+          <tr>
+            <td class="station">Kongsberg <small>Buskerud</small></td>
+            <td class="drive">~1 t 10</td>
+            <td><span class="chip none">Ingen</span></td>
+            <td class="slot">17. aug — før vinduet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Etter fristen</h2>
+    <p class="note">
+      Disse ligger etter 18. september og teller ikke, men er verdt å kjenne til hvis fristen
+      skulle vise seg å være bevegelig: Mysen/Hafslund 23., 25. og 29. september,
+      Kongsvinger-området 24. og 29. september, og Oslo-området fra 12. oktober
+      (12.–16. samt 26., 28., 29. og 30. oktober).
+    </p>
+  </section>
+
+  <section>
+    <h2 class="section-title">Forbehold</h2>
+    <div class="method">
+      <h3>Les dette før du bestiller</h3>
+      <ul>
+        <li>
+          <strong>22. august er en lørdag</strong> — den eneste helgedatoen i hele kartleggingen.
+          Bestillingssystemet tilbyr den og skriver selv «Lørdag 22. august 2026», men det lot seg
+          ikke bekrefte fra offentlige kilder at Drammen faktisk kjører prøver på lørdager.
+          Ring stasjonen før du binder deg.
+        </li>
+        <li>
+          <strong>Fem av sju datoer ligger før siste kjøretime 28. august.</strong> Obligatorisk
+          BE-opplæring må være registrert i TSK-registeret før prøven kan starte. Er den ikke det,
+          kan prøven ikke gjennomføres — og avbestillingsfristen har som regel passert da.
+        </li>
+        <li>
+          <strong>Kjøretidene er anslag ut fra geografi</strong>, ikke hentet fra en rutetjeneste.
+          Hønefoss og Tønsberg ligger på vippen av én time og bikker fort over i rushtid.
+        </li>
+        <li>
+          <strong>Øyeblikksbilde fra 10. august 2026.</strong> Ledige timer blir tatt fortløpende,
+          og avbestillinger dukker opp uten varsel. Listen er et utgangspunkt, ikke en fasit.
+        </li>
+        <li>
+          <strong>Ikke sjekket:</strong> Gol, Hamar og Gjøvik enkeltvis, Elverum, Lillehammer,
+          Larvik, Otta og Tynset — alle godt utenfor halvannen times kjøring.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Avlest fra vegvesen.no / Din side 10. august 2026. Personlig arbeidsnotat — ikke et offisielt
+    dokument fra Statens vegvesen, og ingen erstatning for det du selv ser i bestillingsløsningen.
+  </footer>
+
+</div>
+<p style="max-width:62rem;margin:0 auto;padding:0 1.5rem 3rem;">
+  <a href="/">Tilbake til oversikten</a>
+</p>
+</body>
+</html>
