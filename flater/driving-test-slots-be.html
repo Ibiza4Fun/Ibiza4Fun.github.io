@@ -274,6 +274,12 @@ h2.section-title {
   font-weight: 700;
 }
 
+/* Prioritetsstasjonen skiller seg fra fellesvisningen uten a rope. */
+.month.priority {
+  border-color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
 .legend {
   display: flex;
   flex-wrap: wrap;
@@ -395,13 +401,13 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   <div class="stamps">
     <div class="stamp">
       <span class="stamp-label">Siste sjekk</span>
-      <span class="stamp-value">10.08.2026, 17:08</span>
+      <span class="stamp-value">10.08.2026, 17:24</span>
       <span class="stamp-extra">for 0 min siden</span>
     </div>
     <div class="stamp changed">
       <span class="stamp-label">Siste endring</span>
       <span class="stamp-value">10.08.2026, 17:08</span>
-      <span class="stamp-extra">for 0 min siden</span>
+      <span class="stamp-extra">for 16 min siden</span>
     </div>
     <div class="stamp">
       <span class="stamp-label">Innlogging</span>
@@ -416,7 +422,108 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   </div>
 
   <section>
-    <h2 class="section-title">Kalender</h2>
+    <h2 class="section-title">Billingstad trafikkstasjon</h2>
+    <div class="verdict none">
+      <h2>Ingen ledige timer</h2>
+      <p>Nærmeste trafikkstasjon, ca. 10 minutter unna. Dukker det opp noe her, sendes e-post umiddelbart og timen reserveres automatisk.</p>
+    </div>
+    <div class="months">
+      <div class="month priority">
+        <h3>august 2026</h3>
+        <div class="grid">
+          <div class="dow-head">man</div>
+          <div class="dow-head">tir</div>
+          <div class="dow-head">ons</div>
+          <div class="dow-head">tor</div>
+          <div class="dow-head">fre</div>
+          <div class="dow-head">lør</div>
+          <div class="dow-head">søn</div>
+          <div class="cell blank"></div>
+          <div class="cell blank"></div>
+          <div class="cell blank"></div>
+          <div class="cell blank"></div>
+          <div class="cell blank"></div>
+          <div class="cell outside">1</div>
+          <div class="cell outside">2</div>
+          <div class="cell outside">3</div>
+          <div class="cell outside">4</div>
+          <div class="cell outside">5</div>
+          <div class="cell outside">6</div>
+          <div class="cell outside">7</div>
+          <div class="cell outside">8</div>
+          <div class="cell outside">9</div>
+          <div class="cell outside">10</div>
+          <div class="cell outside">11</div>
+          <div class="cell outside">12</div>
+          <div class="cell outside">13</div>
+          <div class="cell outside">14</div>
+          <div class="cell outside">15</div>
+          <div class="cell outside">16</div>
+          <div class="cell outside">17</div>
+          <div class="cell outside">18</div>
+          <div class="cell outside">19</div>
+          <div class="cell">20</div>
+          <div class="cell">21</div>
+          <div class="cell">22</div>
+          <div class="cell">23</div>
+          <div class="cell">24</div>
+          <div class="cell">25</div>
+          <div class="cell">26</div>
+          <div class="cell">27</div>
+          <div class="cell">28</div>
+          <div class="cell">29</div>
+          <div class="cell">30</div>
+          <div class="cell">31</div>
+        </div>
+      </div>
+      <div class="month priority">
+        <h3>september 2026</h3>
+        <div class="grid">
+          <div class="dow-head">man</div>
+          <div class="dow-head">tir</div>
+          <div class="dow-head">ons</div>
+          <div class="dow-head">tor</div>
+          <div class="dow-head">fre</div>
+          <div class="dow-head">lør</div>
+          <div class="dow-head">søn</div>
+          <div class="cell blank"></div>
+          <div class="cell">1</div>
+          <div class="cell">2</div>
+          <div class="cell">3</div>
+          <div class="cell">4</div>
+          <div class="cell">5</div>
+          <div class="cell">6</div>
+          <div class="cell">7</div>
+          <div class="cell">8</div>
+          <div class="cell">9</div>
+          <div class="cell">10</div>
+          <div class="cell">11</div>
+          <div class="cell">12</div>
+          <div class="cell">13</div>
+          <div class="cell">14</div>
+          <div class="cell">15</div>
+          <div class="cell">16</div>
+          <div class="cell">17</div>
+          <div class="cell">18</div>
+          <div class="cell outside">19</div>
+          <div class="cell outside">20</div>
+          <div class="cell outside">21</div>
+          <div class="cell outside">22</div>
+          <div class="cell outside">23</div>
+          <div class="cell outside">24</div>
+          <div class="cell outside">25</div>
+          <div class="cell outside">26</div>
+          <div class="cell outside">27</div>
+          <div class="cell outside">28</div>
+          <div class="cell outside">29</div>
+          <div class="cell outside">30</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Alle stasjoner</h2>
     <div class="months">
       <div class="month">
         <h3>august 2026</h3>
