@@ -1,0 +1,35 @@
+#!/bin/sh
+# ============================================================================
+# pre-commit - scan for anything credential-shaped before it can be committed.
+#
+# WHY THIS REPOSITORY ESPECIALLY. It is the ONLY public one in the workspace.
+# Everything else - oyna-*, lillehagveien-* - is private, so a mistake there is
+# recoverable by rewriting history before anyone fetches it. Here the mistake is
+# published: GitHub Pages serves it, and a pushed secret must be treated as
+# compromised the moment it lands, not when someone notices.
+#
+# It had NO hooks at all until 2026-08-11. Nothing had leaked, which was luck
+# rather than a control - the same shape as the four plaintext credential files
+# that sat in the workspace root in July and were never committed by accident.
+#
+# WHY THE SCANNER IS A COPY AND NOT A SHARED PATH. Principle P6: a tool lives
+# with what it breaks against. A hook here pointing at ../oyna-channel/tools/
+# would break the day that repository is moved, renamed or cloned alone - and it
+# would break SILENTLY, leaving commits unscanned while everything looked normal.
+# A cross-repo path is the failure that has broken this workspace twice.
+#
+# The scanner refuses when it cannot run, on purpose: an unscanned commit is
+# permanent, so it fails closed rather than open.
+# ============================================================================
+if [ -f tools/check-secrets.sh ]; then
+  if ! sh tools/check-secrets.sh; then
+    echo "pre-commit: refused - see above. This is the public repository." >&2
+    exit 1
+  fi
+else
+  echo "pre-commit: tools/check-secrets.sh is MISSING - refusing to commit unscanned." >&2
+  echo "  An unscanned commit to the one public repository is not a risk worth taking" >&2
+  echo "  for the convenience of a commit going through." >&2
+  exit 1
+fi
+exit 0
