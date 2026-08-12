@@ -401,13 +401,13 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   <div class="stamps">
     <div class="stamp">
       <span class="stamp-label">Siste sjekk</span>
-      <span class="stamp-value">12.08.2026, 21:37</span>
+      <span class="stamp-value">12.08.2026, 22:02</span>
       <span class="stamp-extra">for 0 min siden</span>
     </div>
     <div class="stamp changed">
       <span class="stamp-label">Siste endring</span>
-      <span class="stamp-value">12.08.2026, 18:40</span>
-      <span class="stamp-extra">for 3 timer siden</span>
+      <span class="stamp-value">12.08.2026, 22:02</span>
+      <span class="stamp-extra">for 0 min siden</span>
     </div>
     <div class="stamp">
       <span class="stamp-label">Innlogging</span>
@@ -416,9 +416,9 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     </div>
   </div>
 
-  <div class="verdict ok">
-    <h2>1 dato med ledig time</h2>
-    <p>Nærmeste er Kongsvinger trafikkstasjon onsdag 16. september, ~1 t 25 unna.</p>
+  <div class="verdict none">
+    <h2>Ingen ledige timer i vinduet</h2>
+    <p>Ingen av de kartlagte trafikkstasjonene har ledig time i perioden. Avbestillinger dukker opp uten varsel, så dette kan endre seg når som helst.</p>
   </div>
 
   <section>
@@ -599,7 +599,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
           <div class="cell">13</div>
           <div class="cell">14</div>
           <div class="cell">15</div>
-          <div class="cell hit" title="Kongsvinger trafikkstasjon: 08:10">16</div>
+          <div class="cell">16</div>
           <div class="cell">17</div>
           <div class="cell">18</div>
           <div class="cell outside">19</div>
@@ -632,12 +632,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
           <tr><th>Dato</th><th>Trafikkstasjon</th><th>Est. kjøretid</th><th>Tidspunkt</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="datecell">onsdag 16. september</td>
-            <td class="station">Kongsvinger trafikkstasjon<small>Innlandet</small></td>
-            <td class="drive">~1 t 25</td>
-            <td class="slot">08:10</td>
-          </tr>
+          <tr><td colspan="4" class="empty">Ingen ledige timer i vinduet ved siste sjekk.</td></tr>
         </tbody>
       </table>
     </div>
