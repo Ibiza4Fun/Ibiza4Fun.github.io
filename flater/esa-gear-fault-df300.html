@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Girfeil DF300 — neste gang i båten</title>
+<meta name="description" content="Feltprosedyre for ESA-girfeilen: les ut ECM-en før motoren startes, sjekk kontakter og relé, og test girlinken mekanisk.">
+<meta name="theme-color" content="#0A0C10">
+
+<meta name="flate:kind" content="guide">
+<meta name="flate:date" content="2026-08-17">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/guide.css">
+</head>
+<body>
+
+<div class="gwrap">
+
+  <div class="gtop">
+    <a class="gback" href="/">&larr; alle flater</a>
+    <div class="gtitle">Girfeil DF300 — neste gang i båten</div>
+    <div class="progress">
+      <div class="bar"><span id="fill"></span></div>
+      <div class="ptext"><span id="pdone">0</span>/<span id="ptotal">20</span></div>
+    </div>
+  </div>
+
+  <p class="gintro">
+    Motoren nektet å gire to ganger på samme dag, og kom tilbake etter at strømmen
+    ble tatt. ECM-en har lagret hendelsene, men den har bare tre plasser — hver nye
+    feil skyver ut den eldste. <strong>Les ut ECM-en før motoren startes igjen.</strong>
+    Alt annet på denne sida kan vente.
+  </p>
+
+  <div class="gcallout crit">
+    <p><strong>Før du kjører noe sted.</strong> Når «Check Shift Control» står i
+      displayet er giring umulig, og giret står låst i den posisjonen det hadde da
+      feilen kom. Gir du gass mens det står i forover eller revers, kan båten sette
+      av gårde med en gang.</p>
+    <p>Verkstedhåndboka sier rett ut at motoren ikke skal kjøres i den tilstanden
+      annet enn i nødsfall. Feilen kom to ganger på én dag — regn med at den kommer
+      igjen.</p>
+  </div>
+
+  <h2 class="gsection">Først: les ut ECM-en</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">1</span>
+        <span class="stext">Girspaken i <strong>nøytral</strong>, motordekselet av.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">2</span>
+        <span class="stext">Koble SDS-kabelen: USB → adapter → 4-pins kontakt på motoren.
+          <span class="snote">Adapteren står på COM1.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">3</span>
+        <span class="stext">Tenning <strong>på</strong> — ikke start motoren.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">4</span>
+        <span class="stext">Start SDS og trykk <strong>«Reset»</strong>, ikke «OK».
+          <span class="snote">Grå meny betyr ingen kontakt — sjekk tenning, kabel og COM1.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">5</span>
+        <span class="stext">På laptopen: åpne SDS-felt-mappa og kjør
+          <code>python tools\esa_report.py --watch</code>
+          <span class="snote">Den venter på at du lagrer, og rapporterer av seg selv.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">6</span>
+        <span class="stext">I SDS: <strong>SERVICE DATA</strong> → «All Service Data»
+          → <strong>Save(F3)</strong> → OK → Save.
+          <span class="snote">Velg «All Service Data». Feiltellerne ligger ikke i de mindre gruppene.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">7</span>
+        <span class="stext">Les terminalen. Rapporten kommer på sekunder.
+          <span class="snote">Ingenting skal fotograferes eller noteres — alt ligger i fila.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <div class="gcallout">
+    <p>Det viktigste tallet er <strong>ESA FAILURE(MTR)</strong>. Den sto på 3 den
+      2. august. Har den gått opp, er hendelsene fra i går fanget. Verktøyet
+      sammenlikner mot den avlesningen selv og sier hva som er nytt.</p>
+    <p>Nest viktigst: er koden <strong>8-2</strong> eller <strong>7-5</strong>? Den
+      første er girmotoren, den andre er kommunikasjon inkludert
+      fjernkontrollboksen. To helt ulike jobber.</p>
+  </div>
+
+  <h2 class="gsection">Mens dekselet uansett er av</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">8</span>
+        <span class="stext">Se over girmotorens ledningskontakt.
+          <span class="snote">Grønt belegg, hvitt salt, løse eller tilbaketrukne pinner. Dette er den vanligste årsaken til en feil som forsvinner av seg selv.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">9</span>
+        <span class="stext">Sjekk 15 A-sikringen for shift actuator — og holderen den sitter i.
+          <span class="snote">En sikring som er hel kan likevel ha dårlig kontakt i holderen.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">10</span>
+        <span class="stext">Kjenn at ESA-motorreleet sitter fast, og se over kontaktflatene.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">11</span>
+        <span class="stext">Se over jordpunkter og batteriets hovedforbindelser.
+          <span class="snote">Spenningen lå 1,3–1,8 V lavere ved girfeilene enn motoren ellers har levert på tomgang. Girmotoren trekker mye strøm.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Har du multimeter</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">12</span>
+        <span class="stext">Hovedbryter <strong>av</strong>. Koble girmotorens
+          ledningskontakt fra motorens ledningsnett og mål motstanden mellom de to
+          terminalene.
+          <span class="snote">Skal være 0,3–10 Ω. Utenfor: motoren er mistenkt.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">13</span>
+        <span class="stext">Test ESA-motorreleet: kontinuitet mellom terminal 1 og 2
+          når 12 V legges på 4 (+) og 3 (−).
+          <span class="snote">Kontinuitet med spenning på, ingen uten. Ikke la 12 V-ledningene berøre hverandre.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Mekanisk test — den som forklarer mønsteret</h2>
+
+  <div class="gcallout">
+    <p>Begge de lagrede feilene skjedde på vei inn i <strong>forover</strong>, med
+      sensoren forbi den posisjonen forover skal ha. Nøytralstillingen er derimot
+      perfekt justert. Går girlinken tungt mot forover, stopper motoren mot lasten
+      — og det er nettopp det ECM-en logger.</p>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">14</span>
+        <span class="stext">Trekk shift actuator-sikringen ut av sikringsboksen.
+          <span class="snote">Må gjøres først. Aktuatoren kan ta skade hvis den får strøm mens linken er av.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">15</span>
+        <span class="stext">Koble clutch link rod av clutch lever.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">16</span>
+        <span class="stext">Før girhendelen for hånd mellom forover, nøytral og revers.
+          <span class="snote">Kjennes det trådt, hakete eller tyngre mot forover enn mot revers? Da er det mekanikken, ikke elektronikken.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">17</span>
+        <span class="stext">Sett tilbake: link rod på, sikring i.
+          <span class="snote">Link rod skal være 122 mm lang om den har vært justert.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Hvis feilen kommer mens du kjører</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">18</span>
+        <span class="stext"><strong>Ikke gi gass.</strong> Giret kan stå låst i
+          forover eller revers.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">19</span>
+        <span class="stext">Trykk <strong>ENTER</strong> på turtelleren og les koden.
+          <span class="snote">«Check Engine 8-1», «8-2», «8-3» eller «7-5». Merk deg også om giret sto i forover, revers eller nøytral, og om turtallet var begrenset.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">20</span>
+        <span class="stext">Lagre Service Data <strong>før</strong> du slår av tenningen.
+          <span class="snote">SERVICE DATA → All Service Data → Save(F3). Slår du av først, må du stole på at ECM-en beholder bildet — og bufferen har bare tre plasser.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Tall å måle mot</h2>
+
+  <div class="gcallout">
+    <dl>
+      <dt>Girposisjonssensor, nøytral</dt><dd>2,46–2,54 V</dd>
+      <dt>Innkoblingspunkt forover</dt><dd>2,9–3,1 V</dd>
+      <dt>Forover</dt><dd>ca. 3,7 V</dd>
+      <dt>Revers</dt><dd>ca. 1,3 V</dd>
+      <dt>Girmotorens vikling</dt><dd>0,3–10 Ω</dd>
+      <dt>Clutch link rod</dt><dd>122 mm</dd>
+    </dl>
+  </div>
+
+  <div class="gcallout">
+    <p>Alle tall er hentet fra verkstedhåndboka for DF300, kapittel 3: kodelista på
+      side 3-50, girposisjonssensoren på 3-75 og 3-77, ESA-motor og relé på 3-79 og
+      3-80, og feilsøkingsskjemaet for kode 8-2 på side 3-110.</p>
+  </div>
+
+  <div class="gfoot">
+    <button class="reset" type="button" id="reset">Nullstill</button>
+    <span>avhukingen huskes på denne telefonen</span>
+  </div>
+
+</div>
+
+<script src="/assets/js/guide.js" defer></script>
+<script src="/assets/js/offline.js" defer></script>
+</body>
+</html>

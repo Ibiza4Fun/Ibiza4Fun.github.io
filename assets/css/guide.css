@@ -127,6 +127,52 @@
 }
 .step[aria-pressed="true"] .snote { text-decoration: none; }
 
+/* A guide long enough to need grouping. The heading is not a step and never
+   counts toward progress - guide.js only ever looks at .step. */
+.gsection {
+  margin: 0;
+  padding: 1.6rem clamp(0.9rem, 4vw, 1.25rem) 0.6rem;
+  font-family: var(--mono);
+  font-size: var(--sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Something to read rather than tick off: a reference figure, or a warning
+   that has to survive being skimmed. */
+.gcallout {
+  margin: 0 clamp(0.9rem, 4vw, 1.25rem) 0.5rem;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--card);
+  line-height: 1.55;
+}
+.gcallout p { margin: 0 0 0.5rem; }
+.gcallout p:last-child { margin-bottom: 0; }
+
+.gcallout.crit {
+  border-left-color: var(--temp);
+}
+.gcallout.crit strong { color: var(--temp); }
+
+.gcallout dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.3rem 1rem;
+}
+.gcallout dt { color: var(--dim); }
+.gcallout dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--sm);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  align-self: center;
+}
+
 .gfoot {
   padding: 1rem clamp(0.9rem, 4vw, 1.25rem);
   display: flex;
