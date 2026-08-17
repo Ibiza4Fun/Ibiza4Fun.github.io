@@ -153,8 +153,21 @@ Do not rediscover these. Fix them or leave them, but say which.
 
 - **No `og:image`.** Title, description and URL are set; there is no image file to point
   at, and a tag pointing at nothing is worse than no tag. Needs a 1200x630 PNG.
-- **No local `check-secrets` or `check-language` hooks**, unlike every other repository
-  here. `tools/import.mjs` scans imports, but nothing guards a hand-edited commit. This
-  is the only public repository, so it is the one where a leak costs most.
+- **No local `check-language` hook**, unlike every other repository here. `check-secrets`
+  is now wired (see below); nothing yet checks that reader-facing text is Norwegian and
+  everything else is English.
+
+- **`core.hooksPath` is local config, so a fresh clone is unguarded.** gitleaks and the
+  hook were installed 2026-08-17, but `git config core.hooksPath tools/githooks` lives in
+  `.git/config` and does not travel with the repository. After cloning, run it - and
+  `winget install --id Gitleaks.Gitleaks` - before the first commit. `tools/check-secrets.sh`
+  refuses when the scanner is missing, so an unguarded clone fails closed rather than
+  silently passing.
+
+  When proving the hook works, do not probe it with AWS's documentation example key: it
+  sits on the scanner's allowlist, the scan returns clean, and the test measures nothing.
+  `tools/check-secrets.sh` says so in its own comments and it is still an easy trap to
+  walk into. Use a different key shape, and assemble it at run time so no complete
+  pattern is ever written to a file.
 - **`flater/example-guide.html`** is the template, marked `temporary`. Delete it once a
   second real guide exists.
