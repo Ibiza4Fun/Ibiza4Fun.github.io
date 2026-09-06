@@ -21,6 +21,7 @@
   --ink:#1B1917; --ink-2:#5D584E; --ink-3:#8A8377;
   --line:#DED9D0; --line-2:#CBC5B9;
   --volt:#2a78d6; --volt-soft:rgba(42,120,214,0.16);
+  --tgt:#eb6834;
   --crit:#B3261E; --crit-bg:#FBEDEB; --crit-line:#E8C4BF;
   --warn:#8A5D00; --warn-bg:#FBF3E2; --warn-line:#E8D6AE;
   --ok:#2E6B3E; --ok-bg:#EDF5EE; --ok-line:#C2DBC8;
@@ -33,6 +34,7 @@
     --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
     --line:#312E29; --line-2:#413D36;
     --volt:#3987e5; --volt-soft:rgba(57,135,229,0.20);
+    --tgt:#d95926;
     --crit:#E0655C; --crit-bg:#2A1917; --crit-line:#4A2A25;
     --warn:#D0A215; --warn-bg:#26200F; --warn-line:#453A1B;
     --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
@@ -43,6 +45,7 @@
   --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
   --line:#312E29; --line-2:#413D36;
   --volt:#3987e5; --volt-soft:rgba(57,135,229,0.20);
+  --tgt:#d95926;
   --crit:#E0655C; --crit-bg:#2A1917; --crit-line:#4A2A25;
   --warn:#D0A215; --warn-bg:#26200F; --warn-line:#453A1B;
   --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
@@ -138,6 +141,7 @@ figcaption{font-size:.8125rem;color:var(--ink-3);margin-top:.55rem;max-width:44r
 .legend span{display:inline-flex;align-items:center;gap:.35rem}
 .swatch{width:14px;height:3px;border-radius:2px;background:var(--volt);display:inline-block}
 .swatch.band{height:10px;background:var(--volt-soft);border:1px solid var(--volt);border-radius:3px}
+.swatch.tgt{background:var(--tgt)}
 svg{display:block;width:100%;height:auto;touch-action:pan-y}
 .rd{
   position:absolute; top:.55rem; right:.7rem;
@@ -345,6 +349,104 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
   </table>
   </div>
 
+  <h2 class="sec">Girposisjonen — hva aktuatoren faktisk gjorde</h2>
+  <p class="lede">ECM-en kommanderer en posisjon, og girposisjonssensoren melder tilbake
+    hvor giret står. Begge er logget på 0,2 sekunder. Kommandoen tar nøyaktig
+    <strong>tre faste nivåer</strong> — 1,29 V revers, 2,50 V nøytral, 3,83 V forover.</p>
+
+  <figure>
+    <div class="chartbox">
+      <div class="charttitle">Kommando og faktisk posisjon — 50 sekunder av runde 1</div>
+      <div class="legend">
+        <span><i class="swatch"></i> faktisk posisjon (sensor)</span>
+        <span><i class="swatch tgt"></i> ECM-ens kommando</span>
+      </div>
+      <svg id="c3" viewBox="0 0 760 250" role="img"
+           aria-label="Sensoren følger kommandoen gjennom ni giringer. Kommandoen hopper mellom 2,50 og 3,83 volt, og sensoren treffer hvert nivå innen to målepunkter."></svg>
+      <div class="rd" id="r3"></div>
+    </div>
+    <figcaption>Ni giringer på 50 sekunder. <b>Sensoren treffer kommandoen hver gang</b>,
+      og de to kurvene ligger oppå hverandre mellom hvert skifte. Avviket i ro er
+      0,02 V.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="chartbox">
+      <div class="charttitle">Én giring, sekund for sekund</div>
+      <div class="legend">
+        <span><i class="swatch"></i> faktisk posisjon (sensor)</span>
+        <span><i class="swatch tgt"></i> ECM-ens kommando</span>
+      </div>
+      <svg id="c4" viewBox="0 0 760 230" role="img"
+           aria-label="Kommandoen hopper fra 2,50 til 3,83 volt. Sensoren følger etter og er framme etter 0,4 sekunder, altså to målepunkter."></svg>
+      <div class="rd" id="r4"></div>
+    </div>
+    <figcaption><b>Aktuatoren bruker 0,4 sekunder på hele vandringen</b> — to målepunkter.
+      Den passerer 3,67 V underveis og setter seg på 3,81 V. Dette er en frisk giring, og
+      det er referansen resten av rapporten måler mot.</figcaption>
+  </figure>
+
+  <h2 class="sec">Alle 187 giringene samlet</h2>
+  <p class="lede">Hvor giret faktisk stanset, i begge loggene. <strong>187 giringer landet
+    på ni ulike verdier.</strong> Revers traff 1,31 V alle 27 gangene, uten et eneste
+    avvik.</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Stilling</th><th class="n">Antall</th><th class="n">Område</th>
+      <th class="n">Spredning</th><th class="n">Håndbokas spec</th></tr></thead>
+    <tbody>
+      <tr><td>Forover</td><td class="n">69</td><td class="n">3,81–3,87 V</td><td class="n">0,06 V</td><td class="n">ca. 3,7 V</td></tr>
+      <tr><td>Nøytral</td><td class="n">91</td><td class="n">2,48–2,54 V</td><td class="n">0,06 V</td><td class="n">2,46–2,54 V</td></tr>
+      <tr><td>Revers</td><td class="n">27</td><td class="n">1,31 V</td><td class="n">0,00 V</td><td class="n">ca. 1,3 V</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <figure>
+    <div class="chartbox">
+      <div class="charttitle">Hvor giret stanset i forover — 69 giringer</div>
+      <svg id="c5" viewBox="0 0 760 250" role="img"
+           aria-label="De 69 giringene inn i forover samler seg på fire verdier mellom 3,81 og 3,87 volt. De tre verdiene fra augustfeilene, 3,65, 3,67 og 3,95 volt, ligger utenfor gruppen."></svg>
+    </div>
+    <figcaption><b>De tre verdiene fra augustfeilene faller utenfor alt vi målte i kveld.</b>
+      3,65 og 3,67 V er kortere enn noen av de 69 friske giringene inn i forover, og
+      3,95 V er lengre. Det er dette som gjør de gamle feilbildene til avvik og ikke til
+      normal spredning.</figcaption>
+  </figure>
+
+  <p class="body">Nøytralstillingen ligger midt i håndbokas justeringsspec på
+    2,46 til 2,54 V. <strong>Girlinken er altså riktig justert</strong>, og det stemmer
+    med at posisjonstelleren 8-3 ikke har rørt seg.</p>
+
+  <p class="body">Turtallet lå på 656 o/min i median både i gir og i nøytral, med hele
+    spennet 469 til 781. <strong>Å legge i gir ved kai belaster ikke motoren målbart</strong>
+    — båten står i fortøyningene. Det betyr også at girmotorens eget strømtrekk er den
+    eneste lasten giringen legger på anlegget.</p>
+
+  <h2 class="sec">Et sidefunn: motoren gikk varm i kveld</h2>
+  <p class="lede">Analysen 2. august konkluderte med at kjølestrømmen ikke reguleres —
+    sylindertemperaturen sto på 40 °C på tomgang, mot 60 °C ved 416 driftstimer.
+    <strong>I kveld målte vi 59 °C på tomgang.</strong></p>
+
+  <figure>
+    <div class="chartbox">
+      <div class="charttitle">Sylindertemperatur på tomgang — samme motor, to kvelder</div>
+      <svg id="c6" viewBox="0 0 760 200" role="img"
+           aria-label="Sylindertemperaturen lå på 40 grader 2. august og på 59 grader 6. september, begge på tomgang ved kai."></svg>
+    </div>
+    <figcaption>Målt på tomgang mellom 400 og 800 o/min i begge loggene. 2. august:
+      27 til 41 °C, median 39, stabilisert på 40. 6. september: 58 til 61 °C, median 59.</figcaption>
+  </figure>
+
+  <div class="note-box">
+    <b>Dette er ikke det samme som at problemet er løst.</b> To kvelder er ikke en
+    tidsserie, sjøtemperatur og lufttemperatur er ulike i august og september, og en
+    termostat som henger seg opp av og til gir nettopp dette bildet — den virker,
+    inntil den ikke gjør det. Det som kan sies er at <b>kaldkjøringen ikke gjentok seg
+    i kveld</b>, og at det bør leses ut igjen neste gang uansett.
+  </div>
+
   <h2 class="sec">Hva som ble utelukket</h2>
   <p class="body"><strong>Kommunikasjon og fjernkontrollboks.</strong> Kode 7-5 står
     uendret på 3 mens girmotorfeilen har gått fra 3 til 6.</p>
@@ -410,6 +512,9 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
 const R1 = [[0,13.7,13.55],[4,13.7,13.55],[8,13.7,13.62],[12,13.7,13.55],[16,13.62,13.48],[20,13.7,13.48],[24,13.7,13.55],[28,13.7,13.62],[32,13.7,13.62],[36,13.7,13.55],[40,13.7,13.62],[44,13.66,13.48],[48,13.7,13.62],[52,13.77,13.7],[56,13.84,13.7],[60,13.84,13.77],[64,13.84,13.77],[68,13.88,13.77],[72,13.84,13.7],[76,13.77,13.62],[80,13.84,13.77],[84,13.92,13.84],[88,13.92,13.77],[92,13.92,13.84],[96,13.99,13.84],[100,13.99,13.84],[104,13.84,13.7],[108,13.92,13.7],[112,13.99,13.84],[116,14.06,13.92],[120,14.06,13.99],[124,14.06,13.92],[128,14.06,13.99],[132,14.06,13.84],[136,13.92,13.77],[140,14.06,13.99],[144,14.14,14.06],[148,14.14,14.06],[152,14.21,14.14],[156,14.21,14.14],[160,14.28,14.14],[164,14.06,13.99],[168,14.21,13.99],[172,14.28,14.14],[176,14.36,14.21],[180,14.36,14.28],[184,14.36,14.21],[188,14.43,14.28],[192,14.06,13.77],[196,14.28,13.92],[200,14.32,14.14],[204,14.5,14.14],[208,14.32,14.21],[212,14.5,14.28],[216,14.32,14.21],[220,14.36,14.14],[224,14.14,13.84],[228,14.36,14.14],[232,14.5,14.36],[236,14.43,14.14],[240,14.5,14.21],[244,14.5,14.43],[248,14.46,14.21],[252,14.28,14.21],[256,14.43,14.21],[260,14.43,14.28],[264,14.43,14.21],[268,14.58,14.43],[272,14.58,14.36],[276,14.43,14.28],[280,14.43,14.14],[284,14.36,13.99],[288,14.58,14.5],[292,14.5,14.21],[296,14.62,14.58],[300,14.58,14.43],[304,14.58,14.5],[308,14.5,14.28],[312,14.25,14.14],[316,14.5,14.28],[320,14.58,14.5],[324,14.58,14.43],[328,14.58,14.5],[332,14.58,14.43],[336,14.5,14.28],[340,14.43,14.21],[344,14.43,14.06],[348,14.62,14.5],[352,14.58,14.36],[356,14.58,14.5],[360,14.54,14.21],[364,14.5,14.28],[368,14.5,14.28],[372,14.36,14.14],[376,14.58,14.43],[380,14.58,14.43],[384,14.58,14.5],[388,14.5,14.28],[392,14.58,14.28],[396,14.58,14.21],[400,14.25,14.06],[404,14.58,14.36],[408,14.58,14.28],[412,14.5,14.28],[416,14.58,14.43],[420,14.58,14.5],[424,14.43,14.21],[428,14.28,14.14],[432,14.43,14.06],[436,14.58,14.36],[440,14.58,14.43],[444,14.5,14.21],[448,14.54,14.36],[452,14.58,14.36],[456,14.5,14.36],[460,14.43,14.14],[464,14.5,14.21],[468,14.58,14.5],[472,14.46,14.28],[476,14.58,14.5],[480,14.58,14.36],[484,14.58,14.43],[488,14.28,13.99],[492,14.58,14.43],[496,14.54,14.14],[500,14.58,14.43],[504,14.58,14.5],[508,14.43,14.21],[512,14.58,14.43],[516,14.28,13.99],[520,14.43,14.14],[524,14.5,14.21],[528,14.58,14.36],[532,14.58,14.21],[536,14.5,14.21],[540,14.58,14.5],[544,14.43,14.14],[548,14.43,14.06],[552,14.58,14.5],[556,14.58,14.5],[560,14.58,14.43],[564,14.5,14.43],[568,14.5,14.43],[572,14.58,14.43],[576,14.32,14.21],[580,14.43,14.21],[584,14.58,14.14],[588,14.43,14.28],[592,14.58,14.28],[596,14.62,14.28],[600,14.5,14.21],[604,14.36,13.99],[608,14.39,14.06],[612,14.58,14.43],[616,14.58,14.5],[620,14.58,14.43],[624,14.58,14.5],[628,14.58,14.43],[632,14.5,14.36],[636,14.32,14.14],[640,14.5,14.43],[644,14.58,14.43],[648,14.54,14.5],[652,14.58,14.5],[656,14.58,14.43],[660,14.58,14.43],[664,14.32,14.21],[668,14.43,14.21],[672,14.54,14.43],[676,14.58,14.36],[680,14.58,14.43],[684,14.58,14.5]];
 const V2 = [[0,13.62,13.48],[4,13.73,13.62],[8,13.92,13.7],[12,14.21,13.99],[16,14.14,13.99],[20,14.5,14.36],[24,14.54,14.43],[28,14.58,14.43],[32,14.58,14.5],[36,14.58,14.43],[40,14.58,14.5],[44,14.36,14.21],[48,14.46,14.21],[52,14.58,14.43],[56,14.58,14.5],[60,14.58,14.43],[64,14.58,14.43],[68,14.36,14.06],[72,14.43,13.99],[76,14.36,14.06],[80,14.28,14.06],[84,13.91,13.48],[88,13.7,13.33],[92,13.59,13.4],[96,13.55,13.33],[100,13.8,13.48],[104,14.06,13.62],[108,14.28,13.84],[112,14.14,13.84],[116,14.28,14.14],[120,14.36,14.21],[124,14.54,13.48],[128,13.62,13.4],[132,13.55,13.33],[136,13.77,13.4],[140,13.77,13.4],[144,13.84,13.48],[148,13.7,13.33],[152,13.44,13.33],[156,13.4,13.33],[160,13.55,13.33],[164,13.66,13.4],[168,14.14,13.92],[172,14.21,14.06],[176,13.44,13.33],[180,13.4,13.26],[184,13.62,13.4],[188,13.8,13.62],[192,13.77,13.7],[196,14.1,13.84],[200,14.21,14.14],[204,14.28,14.21],[208,13.99,13.4],[212,14.1,13.84],[216,13.99,13.48],[220,13.77,13.62],[224,13.92,13.77],[228,14.21,13.99],[232,13.55,13.33],[236,13.7,13.48],[240,13.99,13.7],[244,13.52,13.33],[248,13.4,13.26],[252,13.4,13.18],[256,13.7,13.48],[260,14.36,13.77],[264,14.58,14.5],[268,14.28,13.99],[272,14.21,13.99],[276,14.5,14.21],[280,14.28,14.14],[284,13.77,13.48],[288,14.14,13.92],[292,14.58,14.43],[296,14.43,13.99],[300,14.28,14.06],[304,14.58,14.43],[308,14.36,13.99],[312,14.14,13.99],[316,14.5,14.21],[320,14.39,14.14],[324,14.5,14.28],[328,14.43,14.21],[332,14.25,13.99],[336,14.28,13.92],[340,13.99,13.77],[344,13.84,13.48],[348,14.06,13.84],[352,13.62,13.4],[356,13.55,13.4],[360,13.77,13.48],[364,14.06,13.77],[368,14.25,13.77],[372,14.1,13.84],[376,14.43,14.14],[380,14.39,14.21],[384,14.5,14.21],[388,14.58,14.43],[392,14.28,14.14],[396,14.32,14.14],[400,14.28,14.14],[404,14.43,14.21],[408,14.5,14.21],[412,14.28,14.06],[416,14.36,14.14],[420,14.54,14.28],[424,14.58,14.43],[428,14.28,14.14],[432,14.5,14.36],[436,14.58,14.5],[440,14.58,14.43],[444,14.58,14.43],[448,14.58,14.43],[452,14.58,14.43]];
 
+const WIN = [[0.0,3.81,3.83],[0.2,3.81,3.83],[0.4,3.81,3.83],[0.6,3.81,3.83],[0.8,3.81,3.83],[1.0,3.81,3.83],[1.2,3.81,3.83],[1.4,3.81,3.83],[1.6,3.81,3.83],[1.8,3.81,3.83],[2.0,3.81,3.83],[2.2,3.61,2.5],[2.4,2.54,2.5],[2.6,2.52,2.5],[2.8,2.52,2.5],[3.0,2.52,2.5],[3.2,2.52,2.5],[3.4,2.52,2.5],[3.6,2.52,2.5],[3.8,2.52,2.5],[4.0,2.52,2.5],[4.2,2.52,2.5],[4.4,2.52,2.5],[4.6,2.52,2.5],[4.8,2.52,2.5],[5.0,2.52,2.5],[5.2,2.52,2.5],[5.4,2.52,2.5],[5.6,2.52,2.5],[5.8,2.52,2.5],[6.0,2.52,2.5],[6.2,2.52,2.5],[6.4,2.52,2.5],[6.6,2.58,3.83],[6.8,3.67,3.83],[7.0,3.81,3.83],[7.2,3.81,3.83],[7.4,3.81,3.83],[7.6,3.81,3.83],[7.8,3.81,3.83],[8.0,3.81,3.83],[8.2,3.81,3.83],[8.4,3.81,3.83],[8.6,3.81,3.83],[8.8,3.81,3.83],[9.0,3.81,3.83],[9.2,3.81,3.83],[9.4,3.81,3.83],[9.6,3.81,3.83],[9.8,3.81,3.83],[10.0,3.81,3.83],[10.2,3.22,2.5],[10.4,2.52,2.5],[10.6,2.52,2.5],[10.8,2.52,2.5],[11.0,2.52,2.5],[11.2,2.54,3.83],[11.4,3.67,3.83],[11.6,3.81,3.83],[11.8,3.81,3.83],[12.0,3.81,3.83],[12.2,3.81,3.83],[12.4,3.81,3.83],[12.6,3.81,3.83],[12.8,3.81,3.83],[13.0,3.81,3.83],[13.2,3.81,3.83],[13.4,3.81,3.83],[13.6,3.81,3.83],[13.8,3.81,3.83],[14.0,3.38,2.5],[14.2,2.52,2.5],[14.4,2.52,2.5],[14.6,2.52,2.5],[14.8,2.52,2.5],[15.0,2.52,2.5],[15.2,2.52,2.5],[15.4,2.52,2.5],[15.6,2.52,2.5],[15.8,3.44,3.83],[16.0,3.81,3.83],[16.2,3.81,3.83],[16.4,3.81,3.83],[16.6,3.81,3.83],[16.8,3.81,3.83],[17.0,3.81,3.83],[17.2,3.81,3.83],[17.4,3.81,3.83],[17.6,3.81,3.83],[17.8,3.81,3.83],[18.0,3.81,3.83],[18.2,3.81,3.83],[18.4,3.81,3.83],[18.6,3.81,3.83],[18.8,3.81,3.83],[19.0,3.81,3.83],[19.2,3.81,3.83],[19.4,3.81,3.83],[19.6,3.81,3.83],[19.8,3.81,3.83],[20.0,3.81,3.83],[20.2,3.81,3.83],[20.4,3.81,3.83],[20.6,3.81,3.83],[20.8,3.81,3.83],[21.0,3.81,3.83],[21.2,3.81,3.83],[21.4,3.81,3.83],[21.6,3.81,3.83],[21.8,3.81,3.83],[22.0,3.81,3.83],[22.2,3.81,3.83],[22.4,3.81,3.83],[22.6,3.81,3.83],[22.8,3.81,3.83],[23.0,3.81,3.83],[23.2,3.81,3.83],[23.4,3.81,3.83],[23.6,3.81,3.83],[23.8,3.81,3.83],[24.0,3.81,3.83],[24.2,3.81,3.83],[24.4,3.81,3.83],[24.6,3.13,2.5],[24.8,2.52,2.5],[25.0,2.52,2.5],[25.2,2.52,2.5],[25.4,2.52,2.5],[25.6,2.52,2.5],[25.8,2.52,2.5],[26.0,2.52,2.5],[26.2,2.52,2.5],[26.4,2.52,2.5],[26.6,2.52,2.5],[26.8,2.56,3.83],[27.0,3.69,3.83],[27.2,3.83,3.83],[27.4,3.83,3.83],[27.6,3.81,3.83],[27.8,3.83,3.83],[28.0,3.83,3.83],[28.2,3.83,3.83],[28.4,3.83,3.83],[28.6,3.83,3.83],[28.8,3.83,3.83],[29.0,3.83,3.83],[29.2,3.83,3.83],[29.4,3.83,3.83],[29.6,3.83,3.83],[29.8,3.83,3.83],[30.0,3.83,3.83],[30.2,3.83,3.83],[30.4,3.83,3.83],[30.6,3.83,3.83],[30.8,3.83,3.83],[31.0,3.83,3.83],[31.2,3.83,3.83],[31.4,3.83,3.83],[31.6,3.83,3.83],[31.8,3.83,3.83],[32.0,3.83,3.83],[32.2,3.83,3.83],[32.4,3.83,3.83],[32.6,3.83,3.83],[32.8,3.83,3.83],[33.0,3.83,3.83],[33.2,3.83,3.83],[33.4,3.83,3.83],[33.6,3.83,3.83],[33.8,3.83,3.83],[34.0,3.83,3.83],[34.2,3.83,3.83],[34.4,3.83,3.83],[34.6,3.83,3.83],[34.8,3.83,3.83],[35.0,3.83,3.83],[35.2,3.65,2.5],[35.4,2.56,2.5],[35.6,2.52,2.5],[35.8,2.52,2.5],[36.0,2.52,2.5],[36.2,2.52,2.5],[36.4,2.52,2.5],[36.6,2.52,2.5],[36.8,2.52,2.5],[37.0,2.56,3.83],[37.2,3.67,3.83],[37.4,3.85,3.83],[37.6,3.85,3.83],[37.8,3.85,3.83],[38.0,3.85,3.83],[38.2,3.85,3.83],[38.4,3.85,3.83],[38.6,3.85,3.83],[38.8,3.85,3.83],[39.0,2.97,2.5],[39.2,2.52,2.5],[39.4,2.52,2.5],[39.6,2.52,2.5],[39.8,2.52,2.5],[40.0,2.52,2.5],[40.2,2.52,2.5],[40.4,2.52,2.5],[40.6,2.52,3.83],[40.8,3.24,3.83],[41.0,3.77,3.83],[41.2,3.87,3.83],[41.4,3.87,3.83],[41.6,3.87,3.83],[41.8,3.87,3.83],[42.0,3.87,3.83],[42.2,3.87,3.83],[42.4,3.87,3.83],[42.6,3.87,3.83],[42.8,3.87,3.83],[43.0,3.87,3.83],[43.2,3.87,3.83],[43.4,3.87,3.83],[43.6,3.87,3.83],[43.8,3.87,3.83],[44.0,3.87,3.83],[44.2,3.87,3.83],[44.4,3.87,3.83],[44.6,3.87,3.83],[44.8,3.87,3.83],[45.0,3.87,3.83],[45.2,3.87,3.83],[45.4,3.87,3.83],[45.6,3.87,3.83],[45.8,3.87,3.83],[46.0,3.87,3.83],[46.2,3.87,3.83],[46.4,3.87,3.83],[46.6,3.87,3.83],[46.8,3.87,3.83],[47.0,3.87,3.83],[47.2,3.87,3.83],[47.4,3.87,3.83],[47.6,3.87,3.83],[47.8,3.87,3.83],[48.0,3.87,3.83],[48.2,3.87,3.83],[48.4,3.87,3.83],[48.6,3.16,2.5],[48.8,2.52,2.5],[49.0,2.52,2.5],[49.2,2.52,2.5],[49.4,2.52,2.5],[49.6,2.52,2.5],[49.8,2.79,3.83],[50.0,3.77,3.83]];
+const ZOOM = [[0.0,2.52,2.5],[0.2,2.52,2.5],[0.4,2.52,2.5],[0.6,2.52,2.5],[0.8,2.52,2.5],[1.0,2.52,2.5],[1.2,2.58,3.83],[1.4,3.67,3.83],[1.6,3.81,3.83],[1.8,3.81,3.83],[2.0,3.81,3.83],[2.2,3.81,3.83],[2.4,3.81,3.83],[2.6,3.81,3.83],[2.8,3.81,3.83],[3.0,3.81,3.83],[3.2,3.81,3.83],[3.4,3.81,3.83],[3.6,3.81,3.83],[3.8,3.81,3.83],[4.0,3.81,3.83],[4.2,3.81,3.83],[4.4,3.81,3.83],[4.6,3.81,3.83],[4.8,3.22,2.5],[5.0,2.52,2.5],[5.2,2.52,2.5],[5.4,2.52,2.5],[5.6,2.52,2.5],[5.8,2.54,3.83],[6.0,3.67,3.83],[6.2,3.81,3.83],[6.4,3.81,3.83],[6.6,3.81,3.83],[6.8,3.81,3.83],[7.0,3.81,3.83],[7.2,3.81,3.83],[7.4,3.81,3.83],[7.6,3.81,3.83],[7.8,3.81,3.83],[8.0,3.81,3.83]];
+const DIST = [[1.31,27],[2.48,11],[2.5,9],[2.52,70],[2.54,1],[3.81,45],[3.83,19],[3.85,4],[3.87,1]];
 const W=760,H=260,L=44,R=12,T=12,B=30;
 const YMIN=13.0,YMAX=14.8;
 const NS="http://www.w3.org/2000/svg";
@@ -471,6 +576,174 @@ function draw(svgId,rdId,data){
 
 draw("c1","r1",R1);
 draw("c2","r2",V2);
+
+/* Gear position: commanded against actual. Two series, both direct-labelled.
+   The direct labels are not decoration. Orange sits at 2.89:1 against the light
+   surface, below 3:1, and the color rule then requires visible labels rather
+   than color alone. */
+function gear(svgId,rdId,data,ymin,ymax,tickStep,labelAt){
+  const svg=document.getElementById(svgId), rd=document.getElementById(rdId);
+  const h=svg.viewBox.baseVal.height;
+  const tmax=data[data.length-1][0];
+  const x=t=>L+(t/tmax)*(W-L-R);
+  const y=v=>T+(1-(v-ymin)/(ymax-ymin))*(h-T-B);
+
+  const levels=[[1.29,"revers"],[2.50,"nøytral"],[3.83,"forover"]];
+  for(const [v,name] of levels){
+    if(v<ymin||v>ymax) continue;
+    svg.appendChild(el("line",{x1:L,x2:W-R,y1:y(v).toFixed(1),y2:y(v).toFixed(1),
+      stroke:"var(--line-2)","stroke-width":1,"stroke-dasharray":"3 4"}));
+    const tx=el("text",{x:L-8,y:(y(v)+4).toFixed(1),"text-anchor":"end",
+      fill:"var(--ink-3)","font-size":11,"font-family":"var(--mono)"});
+    tx.textContent=v.toFixed(2);
+    svg.appendChild(tx);
+    const nm=el("text",{x:L+5,y:(y(v)-6).toFixed(1),"text-anchor":"start",
+      fill:"var(--ink-3)","font-size":10,"font-family":"var(--mono)"});
+    nm.textContent=name;
+    svg.appendChild(nm);
+  }
+  for(let t=0;t<=tmax+0.01;t+=tickStep){
+    const tx=el("text",{x:x(t).toFixed(1),y:h-10,"text-anchor":"middle",
+      fill:"var(--ink-3)","font-size":11,"font-family":"var(--mono)"});
+    tx.textContent=t+" s";
+    svg.appendChild(tx);
+  }
+
+  let pt="",ps="";
+  data.forEach((d,i)=>{
+    pt+=(i?"L":"M")+x(d[0]).toFixed(1)+" "+y(d[2]).toFixed(1)+" ";
+    ps+=(i?"L":"M")+x(d[0]).toFixed(1)+" "+y(d[1]).toFixed(1)+" ";
+  });
+  svg.appendChild(el("path",{d:pt,fill:"none",stroke:"var(--tgt)","stroke-width":2.5,
+    "stroke-linejoin":"round","stroke-opacity":.85}));
+  svg.appendChild(el("path",{d:ps,fill:"none",stroke:"var(--volt)","stroke-width":2,
+    "stroke-linejoin":"round"}));
+
+  for(const [i,which,col,dy] of labelAt){
+    const d=data[i];
+    const g=el("text",{x:(x(d[0])+8).toFixed(1),
+      y:(y(which==="sensor"?d[1]:d[2])+dy).toFixed(1),
+      fill:col,"font-size":12,"font-weight":600,"font-family":"var(--sans)"});
+    g.textContent=which==="sensor"?"faktisk posisjon":"ECM-ens kommando";
+    svg.appendChild(g);
+  }
+
+  const cross=el("line",{y1:T,y2:h-B,stroke:"var(--ink-3)","stroke-width":1,opacity:0});
+  svg.appendChild(cross);
+  function at(ev){
+    const r=svg.getBoundingClientRect();
+    const px=((ev.touches?ev.touches[0].clientX:ev.clientX)-r.left)/r.width*W;
+    const t=Math.max(0,Math.min(tmax,(px-L)/(W-L-R)*tmax));
+    let best=data[0];
+    for(const d of data){if(Math.abs(d[0]-t)<Math.abs(best[0]-t))best=d;}
+    cross.setAttribute("x1",x(best[0]));cross.setAttribute("x2",x(best[0]));
+    cross.setAttribute("opacity",1);
+    rd.textContent=best[0].toFixed(1)+" s   kommando "+best[2].toFixed(2)
+      +" V   faktisk "+best[1].toFixed(2)+" V";
+    rd.classList.add("on");
+  }
+  function off(){cross.setAttribute("opacity",0);rd.classList.remove("on");}
+  svg.addEventListener("pointermove",at);
+  svg.addEventListener("pointerleave",off);
+  svg.addEventListener("touchmove",at,{passive:true});
+  svg.addEventListener("touchend",off);
+}
+
+/* Distribution, forward position only, zoomed.
+   A first version put all three gear positions on one 1.2-4.0 V axis. The
+   values inside each cluster are 0.02 V apart, so the bars and their count
+   labels landed on top of each other and the fault markers collided with the
+   axis labels. The comparison that matters is local to forward anyway - that
+   is where the August faults sit - so the chart now asks one question with
+   room to answer it. Neutral and reverse are in the table above. */
+function dist(svgId,data,faults){
+  const svg=document.getElementById(svgId);
+  const h=svg.viewBox.baseVal.height, BB=54;
+  const xmin=3.55,xmax=4.00,nmax=50;
+  const x=v=>L+((v-xmin)/(xmax-xmin))*(W-L-R);
+  const y=n=>T+18+(1-n/nmax)*(h-T-BB-18);
+
+  for(let n=0;n<=nmax;n+=10){
+    svg.appendChild(el("line",{x1:L,x2:W-R,y1:y(n).toFixed(1),y2:y(n).toFixed(1),
+      stroke:"var(--line)","stroke-width":1}));
+    const tx=el("text",{x:L-8,y:(y(n)+4).toFixed(1),"text-anchor":"end",
+      fill:"var(--ink-3)","font-size":11,"font-family":"var(--mono)"});
+    tx.textContent=n;
+    svg.appendChild(tx);
+  }
+  for(let v=3.6;v<=3.901;v+=0.1){
+    const tx=el("text",{x:x(v).toFixed(1),y:h-BB+22,"text-anchor":"middle",
+      fill:"var(--ink-3)","font-size":11,"font-family":"var(--mono)"});
+    tx.textContent=v.toFixed(2)+" V";
+    svg.appendChild(tx);
+  }
+
+  for(const [v,n] of data){
+    svg.appendChild(el("rect",{x:(x(v)-11).toFixed(1),y:y(n).toFixed(1),width:22,
+      height:(y(0)-y(n)).toFixed(1),rx:3,fill:"var(--volt)"}));
+    const tx=el("text",{x:x(v).toFixed(1),y:(y(n)-7).toFixed(1),"text-anchor":"middle",
+      fill:"var(--ink-2)","font-size":11,"font-weight":600,"font-family":"var(--mono)"});
+    tx.textContent=n;
+    svg.appendChild(tx);
+  }
+
+  for(const [v,lab,side] of faults){
+    svg.appendChild(el("line",{x1:x(v).toFixed(1),x2:x(v).toFixed(1),y1:y(0),y2:y(0)+13,
+      stroke:"var(--crit)","stroke-width":2}));
+    svg.appendChild(el("path",{d:"M"+(x(v)-5).toFixed(1)+" "+(y(0)+13)
+      +"L"+(x(v)+5).toFixed(1)+" "+(y(0)+13)
+      +"L"+x(v).toFixed(1)+" "+(y(0)+4)+"Z", fill:"var(--crit)"}));
+    const tx=el("text",{x:x(v).toFixed(1),y:y(0)+29,"text-anchor":side,
+      fill:"var(--crit)","font-size":11,"font-weight":600,"font-family":"var(--mono)"});
+    tx.textContent=lab;
+    svg.appendChild(tx);
+  }
+  const note=el("text",{x:L,y:h-6,fill:"var(--ink-3)","font-size":11,
+    "font-family":"var(--sans)"});
+  note.textContent="Søylene er de 69 giringene inn i forover. Røde trekanter er augustfeilene — ingen giring i kveld landet der.";
+  svg.appendChild(note);
+}
+
+/* Cylinder temperature: two evenings, same engine, both at idle. */
+function temps(svgId,rows){
+  const svg=document.getElementById(svgId);
+  const h=svg.viewBox.baseVal.height;
+  const tmin=20,tmax=70;
+  const x=v=>L+70+((v-tmin)/(tmax-tmin))*(W-L-R-90);
+  for(let v=20;v<=70.01;v+=10){
+    svg.appendChild(el("line",{x1:x(v).toFixed(1),x2:x(v).toFixed(1),y1:T+6,y2:h-34,
+      stroke:"var(--line)","stroke-width":1}));
+    const tx=el("text",{x:x(v).toFixed(1),y:h-16,"text-anchor":"middle",
+      fill:"var(--ink-3)","font-size":11,"font-family":"var(--mono)"});
+    tx.textContent=v+" °C";
+    svg.appendChild(tx);
+  }
+  rows.forEach((r,i)=>{
+    const yy=T+34+i*52;
+    const lb=el("text",{x:L-4,y:yy+5,fill:"var(--ink-2)","font-size":12,
+      "font-weight":600,"font-family":"var(--sans)"});
+    lb.textContent=r.navn;
+    svg.appendChild(lb);
+    svg.appendChild(el("rect",{x:x(r.lo).toFixed(1),y:yy-9,
+      width:(x(r.hi)-x(r.lo)).toFixed(1),height:18,rx:9,
+      fill:r.farge,"fill-opacity":.22,stroke:r.farge,"stroke-width":1.5}));
+    svg.appendChild(el("circle",{cx:x(r.med).toFixed(1),cy:yy,r:5,fill:r.farge,
+      stroke:"var(--surface)","stroke-width":2}));
+    const vt=el("text",{x:(x(r.hi)+10).toFixed(1),y:yy+5,fill:"var(--ink)",
+      "font-size":13,"font-weight":650,"font-family":"var(--mono)"});
+    vt.textContent=r.med+" °C";
+    svg.appendChild(vt);
+  });
+}
+
+gear("c3","r3",WIN,2.30,4.00,10,[[80,"sensor","var(--volt)",-10],[20,"tgt","var(--tgt)",22]]);
+gear("c4","r4",ZOOM,2.30,4.00,2,[[3,"sensor","var(--volt)",16],[10,"tgt","var(--tgt)",-9]]);
+dist("c5",DIST.filter(d=>d[0]>3.5),
+     [[3.65,"3,65","middle"],[3.67,"3,67","middle"],[3.95,"3,95","middle"]]);
+temps("c6",[
+  {navn:"2. august",   lo:27,hi:41,med:40,farge:"var(--tgt)"},
+  {navn:"6. september",lo:58,hi:61,med:59,farge:"var(--volt)"}
+]);
 </script>
 
 </body>
