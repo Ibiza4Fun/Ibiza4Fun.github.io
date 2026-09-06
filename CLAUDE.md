@@ -38,7 +38,7 @@ costs him time he already spent.
 | **No description under a title on the index** | This is what made an earlier draft read as a blog. A title that needs explaining is a title to rewrite. |
 | **A grid of cards, not a dated register** | The register form was tried and read as a blog too. |
 | **Card artwork is computed, never stored** | "A card with an image" means finding an image per page, every time. That is the one requirement that would have stopped this in practice. The title hashes to a seed; the seed picks hue and pattern. |
-| **Dark by default, light follows the reader's setting** | No toggle. A toggle costs JS, storage and a flash on load. |
+| **Dark by default, light follows the reader's setting** | No toggle. A toggle costs JS, storage and a flash on load. **One exception, on Bård's request 2026-09-06:** `esa-gear-fault-df300.html` pins the light tokens unconditionally in its own `<style>`, because it is read on a jetty in daylight and following the device setting was not enough. That override is deliberate - do not remove it as an inconsistency. Any page read outdoors may do the same; the site default stays dark. |
 | **Offline cache** | A guide is read outdoors with one bar of signal, which is exactly when a network fetch fails. |
 | **Generated files are git-ignored** | `index.html`, `sitemap.xml`, `sw.js`. CI rebuilds them, so the published site cannot drift from `flater/`. |
 
