@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Girfeil DF300 — kjøreplan i båten</title>
-<meta name="description" content="Ren oppskrift for girfeilen, alt ved kai og bare logging: les ut ECM-en, sveip sensoren, og logg to runder giringer. Ingen demontering, ingen multimeter, ingen tur.">
+<meta name="description" content="Ren oppskrift for girfeilen, alt ved kai og bare logging: fangst i gang før SDS, les ut ECM-en, sveip sensoren, og logg to runder giringer. Ingen demontering, ingen multimeter.">
 <meta name="theme-color" content="#0A0C10">
 
 <meta name="flate:kind" content="guide">
@@ -39,7 +39,7 @@
       giret låst der det er. Doble fortøyninger før du begynner.</p>
   </div>
 
-  <h2 class="gsection">Del 1 — Les ut ECM-en · 10 min</h2>
+  <h2 class="gsection">Del 1 — Rigg · rekkefølgen er det kritiske</h2>
 
   <ol class="steps">
     <li>
@@ -51,26 +51,43 @@
     <li>
       <button class="step" type="button" aria-pressed="false">
         <span class="num">2</span>
-        <span class="stext">Koble SDS-kabelen. Tenning på — <strong>ikke start motoren.</strong></span>
+        <span class="stext">Koble SDS-kabelen. <strong>Ikke start SDS ennå.</strong></span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
         <span class="num">3</span>
-        <span class="stext">Start SDS. Trykk <strong>Reset</strong>, ikke OK.</span>
+        <span class="stext">Start Wireshark. Velg USBPcap-grensesnittet der
+          <strong>«USB Serial Converter»</strong> står i enhetslista. Start fangsten.
+          <span class="snote">Du har to rot-huber — velger du feil, fanges ingenting. Fjern haken for «Capture from all devices», huk av bare USB Serial Converter.</span>
+        </span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
         <span class="num">4</span>
-        <span class="stext">På laptopen: <code>python tools\esa_report.py --watch</code>
-          <span class="snote">Ikke legg til <code>--set-baseline</code>.</span>
+        <span class="stext">Tenning på — <strong>ikke start motoren.</strong>
+          Start SDS. Trykk <strong>Reset</strong>, ikke OK.
+          <span class="snote">Wireshark først, alltid. Starter SDS før fangsten, mister vi oppstartsekvensen mot motoren.</span>
         </span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
         <span class="num">5</span>
+        <span class="stext">På laptopen: <code>python tools\shift_log.py --watch</code>
+          <span class="snote">Denne følger begge SDS-mappene, både tidsserien og Service Data. Den gamle <code>esa_report.py --watch</code> så bare den ene.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Del 2 — Les ut ECM-en · 10 min</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">6</span>
         <span class="stext">SDS: SERVICE DATA → <strong>All Service Data</strong> → Save(F3) → OK → Save.
           <span class="snote">Må være «All Service Data». En mindre gruppe mangler tellerne.</span>
         </span>
@@ -78,37 +95,46 @@
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">6</span>
+        <span class="num">7</span>
         <span class="stext">Skriv <strong>«lagret»</strong> til meg.</span>
       </button>
     </li>
   </ol>
 
-  <h2 class="gsection">Del 2 — Sveip sensoren · 5 min</h2>
+  <h2 class="gsection">Del 3 — Sveip sensoren · 5 min</h2>
 
   <ol class="steps">
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">7</span>
+        <span class="num">8</span>
+        <span class="stext">Valgfritt, gir flere kanaler enn seks:
+          <code>powershell -ExecutionPolicy Bypass -File tools\sds_capture.ps1 -IntervalSeconds 5</code>
+          <span class="snote">Leser tallene rett fra SDS-vinduet. La Service Data stå åpent og synlig, ikke minimert.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">9</span>
         <span class="stext">Bli i SERVICE DATA. Finn <code>SHIFT POSITION SNSR OUTPUT</code>.</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">8</span>
+        <span class="num">10</span>
         <span class="stext">Motoren av, tenning på. Før girspaken <strong>langsomt</strong>
           til forover og tilbake.</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">9</span>
+        <span class="num">11</span>
         <span class="stext">Det samme langsomt til revers og tilbake.</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">10</span>
+        <span class="num">12</span>
         <span class="stext">Si fra om tallet beveget seg jevnt, eller hoppet.
           <span class="snote">Rørte det seg ikke i det hele tatt, si det — da fanger loggen dette i stedet.</span>
         </span>
@@ -116,12 +142,12 @@
     </li>
   </ol>
 
-  <h2 class="gsection">Del 3 — Varm opp · 10 min</h2>
+  <h2 class="gsection">Del 4 — Varm opp · 10 min</h2>
 
   <ol class="steps">
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">11</span>
+        <span class="num">13</span>
         <span class="stext">Start motoren. La den gå på tomgang i nøytral i
           <strong>ti minutter.</strong>
           <span class="snote">Begge de lagrede feilene kom med varm motor, 50 til 60 grader. Kald motor er dårligere odds.</span>
@@ -130,36 +156,38 @@
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">12</span>
+        <span class="num">14</span>
         <span class="stext">Mens den varmer: lukk Service Data, gå til
-          <strong>DATA LOGGER</strong> → Setup.</span>
+          <strong>DATA LOGGER</strong> → Setup.
+          <span class="snote">Data Logger og Service Data kan ikke stå åpne samtidig. Kjører du skjermloggeren fra steg 8, stopp den nå.</span>
+        </span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">13</span>
+        <span class="num">15</span>
         <span class="stext">Logging time: <strong>10 min</strong>.</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">14</span>
+        <span class="num">16</span>
         <span class="stext">Kryss av disse seks:
           <code>SHIFT POSITION SNSR OUTPUT</code> · <code>ESA TRGT POSITION</code> ·
           <code>BATTERY VOLTAGE</code> · <code>ENGINE SPEED</code> ·
           <code>SHIFT POSITION</code> · <code>NEUTRAL SWITCH</code>
-          <span class="snote">Maks seks. Mangler et navn, hopp over det og si hvilke du fikk.</span>
+          <span class="snote">Maks seks. De to første må med — uten dem finner verktøyet ingen giringer. Mangler et av de andre navnene, hopp over det og si hvilke du fikk.</span>
         </span>
       </button>
     </li>
   </ol>
 
-  <h2 class="gsection">Del 4 — Runde 1, rolige giringer · 15 min</h2>
+  <h2 class="gsection">Del 5 — Runde 1, rolige giringer · 15 min</h2>
 
   <ol class="steps">
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">15</span>
+        <span class="num">17</span>
         <span class="stext">Monitor → <strong>Go</strong>. Se at tidtelleren løper.
           <span class="snote">Go starter loggingen. Monitor alene logger ingenting.</span>
         </span>
@@ -167,21 +195,21 @@
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">16</span>
+        <span class="num">18</span>
         <span class="stext">Nøytral → <strong>forover</strong> → nøytral. To sekunder i gir,
           rolig bevegelse. <strong>Ti ganger.</strong></span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">17</span>
+        <span class="num">19</span>
         <span class="stext">Nøytral → <strong>revers</strong> → nøytral, på samme måte.
           <strong>Ti ganger.</strong></span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">18</span>
+        <span class="num">20</span>
         <span class="stext">Stop → <strong>Save(F3)</strong> — mens motoren fortsatt går.
           <span class="snote">Loggen finnes ikke før du har trykket Save. Slår du av først, er den borte.</span>
         </span>
@@ -189,19 +217,19 @@
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">19</span>
+        <span class="num">21</span>
         <span class="stext">SERVICE DATA → All Service Data → Save(F3) en gang til.</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">20</span>
+        <span class="num">22</span>
         <span class="stext">Skriv <strong>«lagret»</strong> til meg.</span>
       </button>
     </li>
   </ol>
 
-  <h2 class="gsection">Del 5 — Runde 2, raske giringer · 10 min</h2>
+  <h2 class="gsection">Del 6 — Runde 2, raske giringer · 10 min</h2>
 
   <div class="gcallout">
     <p>Samme øvelse, men <strong>kjapt</strong>. Rask bevegelse gir aktuatoren en helt
@@ -211,34 +239,35 @@
   <ol class="steps">
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">21</span>
+        <span class="num">23</span>
         <span class="stext">DATA LOGGER → Setup → samme seks → Monitor → <strong>Go</strong>.</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">22</span>
+        <span class="num">24</span>
         <span class="stext">Rett i forover, rett tilbake til nøytral, uten pause.
           <strong>Ti ganger.</strong></span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">23</span>
+        <span class="num">25</span>
         <span class="stext">Det samme mot revers. <strong>Ti ganger.</strong></span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">24</span>
+        <span class="num">26</span>
         <span class="stext">Stop → <strong>Save(F3)</strong> mens motoren går. Så
           All Service Data → Save(F3).</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">25</span>
-        <span class="stext">Stopp motoren. Skriv <strong>«lagret»</strong> til meg.</span>
+        <span class="num">27</span>
+        <span class="stext">Stopp motoren. Stopp Wireshark og lagre som pcapng.
+          Skriv <strong>«lagret»</strong> til meg.</span>
       </button>
     </li>
   </ol>
@@ -248,20 +277,20 @@
   <ol class="steps">
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">26</span>
+        <span class="num">28</span>
         <span class="stext"><strong>Ikke gi gass.</strong></span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">27</span>
+        <span class="num">29</span>
         <span class="stext">Les meldingen i displayet, ordrett. Trykk så
           <strong>ENTER</strong> og les koden.</span>
       </button>
     </li>
     <li>
       <button class="step" type="button" aria-pressed="false">
-        <span class="num">28</span>
+        <span class="num">30</span>
         <span class="stext">Lagre begge to <strong>før</strong> du slår av tenningen.
           Så si fra.</span>
       </button>
