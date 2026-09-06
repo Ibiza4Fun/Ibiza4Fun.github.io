@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DF300 — girfeilen er et spenningsfall</title>
+<meta name="description" content="Feltmåling ved kai 6. september 2026: 187 giringer, to logger og ECM-ens egne feilbilder viser at girfeilen utløses av spenningsfall fra ankervinsjen på et batteri som ikke er toppladet.">
+<meta name="theme-color" content="#0A0C10">
+
+<meta name="flate:kind" content="rapport">
+<meta name="flate:date" content="2026-09-06">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+</head>
+<body>
+
+<style>
+:root{
+  --ground:#FCFCFB; --surface:#F5F3EF; --surface-2:#EDEAE3;
+  --ink:#1B1917; --ink-2:#5D584E; --ink-3:#8A8377;
+  --line:#DED9D0; --line-2:#CBC5B9;
+  --volt:#2a78d6; --volt-soft:rgba(42,120,214,0.16);
+  --crit:#B3261E; --crit-bg:#FBEDEB; --crit-line:#E8C4BF;
+  --warn:#8A5D00; --warn-bg:#FBF3E2; --warn-line:#E8D6AE;
+  --ok:#2E6B3E; --ok-bg:#EDF5EE; --ok-line:#C2DBC8;
+  --sans:ui-sans-serif,"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"SF Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#161513; --surface:#1E1C19; --surface-2:#272420;
+    --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
+    --line:#312E29; --line-2:#413D36;
+    --volt:#3987e5; --volt-soft:rgba(57,135,229,0.20);
+    --crit:#E0655C; --crit-bg:#2A1917; --crit-line:#4A2A25;
+    --warn:#D0A215; --warn-bg:#26200F; --warn-line:#453A1B;
+    --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#161513; --surface:#1E1C19; --surface-2:#272420;
+  --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
+  --line:#312E29; --line-2:#413D36;
+  --volt:#3987e5; --volt-soft:rgba(57,135,229,0.20);
+  --crit:#E0655C; --crit-bg:#2A1917; --crit-line:#4A2A25;
+  --warn:#D0A215; --warn-bg:#26200F; --warn-line:#453A1B;
+  --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--ground); color:var(--ink);
+  font:400 16px/1.6 var(--sans);
+  padding:0 1.15rem 5rem;
+}
+.wrap{max-width:56rem;margin:0 auto}
+
+.back{
+  display:inline-block; margin:1.6rem 0 0;
+  font-size:.8125rem; color:var(--ink-3); text-decoration:none;
+}
+.back:hover{color:var(--volt)}
+
+.rule{height:2px;background:var(--ink);margin:1.5rem 0 1.4rem}
+.eyebrow{
+  font:600 .6875rem/1.4 var(--mono); letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:.7rem;
+}
+h1{
+  font-size:clamp(1.75rem,5.5vw,2.9rem); line-height:1.1;
+  letter-spacing:-.02em; font-weight:650; margin-bottom:1.1rem;
+}
+.ident{
+  display:flex; flex-wrap:wrap; gap:.4rem 1.4rem;
+  font:.8125rem/1.5 var(--mono); color:var(--ink-3);
+  padding-bottom:1.6rem; border-bottom:1px solid var(--line);
+}
+.ident b{color:var(--ink-2);font-weight:500}
+
+.verdict{
+  background:var(--ok-bg); border:1px solid var(--ok-line);
+  border-radius:12px; padding:1.35rem 1.4rem; margin:1.9rem 0;
+}
+.verdict .tag{
+  display:inline-block; font:600 .6875rem/1 var(--mono);
+  letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ok); margin-bottom:.6rem;
+}
+.verdict h2{font-size:1.2rem;line-height:1.35;font-weight:600;margin-bottom:.7rem}
+.verdict p{color:var(--ink-2);font-size:.9375rem;margin-bottom:.55rem}
+.verdict p:last-child{margin-bottom:0}
+
+h2.sec{
+  font-size:1.3rem; font-weight:620; letter-spacing:-.01em;
+  margin:2.9rem 0 .5rem; padding-top:1.5rem; border-top:1px solid var(--line);
+}
+h2.sec:first-of-type{border-top:none}
+.lede{color:var(--ink-2);font-size:.9375rem;margin-bottom:1.2rem;max-width:46rem}
+p.body{color:var(--ink-2);font-size:.9375rem;margin-bottom:.9rem;max-width:46rem}
+p.body strong{color:var(--ink);font-weight:600}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.7rem;margin:1.3rem 0 .4rem}
+.tile{
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:10px; padding:.85rem .9rem; display:flex; flex-direction:column; gap:.3rem;
+}
+.tile.bad{background:var(--crit-bg);border-color:var(--crit-line)}
+.tile.good{background:var(--ok-bg);border-color:var(--ok-line)}
+.tile.warn{background:var(--warn-bg);border-color:var(--warn-line)}
+.tile .lbl{font:500 .6875rem/1.3 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.tile .val{font-size:1.85rem;line-height:1;font-weight:640;letter-spacing:-.02em}
+.tile .val .u{font-size:.875rem;font-weight:500;color:var(--ink-3);margin-left:.15rem}
+.tile .note{font-size:.75rem;line-height:1.4;color:var(--ink-3)}
+
+table{width:100%;border-collapse:collapse;font-size:.875rem;margin:1.1rem 0 .5rem}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:600 .6875rem/1.3 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+td{color:var(--ink-2)}
+td.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+th.n{text-align:right}
+td b{color:var(--ink);font-weight:620}
+tr.hi td{background:var(--crit-bg)}
+
+figure{margin:1.4rem 0 .4rem}
+figcaption{font-size:.8125rem;color:var(--ink-3);margin-top:.55rem;max-width:44rem}
+.chartbox{
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:10px; padding:.9rem .6rem .5rem; position:relative;
+}
+.charttitle{
+  font:600 .75rem/1.3 var(--mono); letter-spacing:.04em;
+  text-transform:uppercase; color:var(--ink-2); padding:0 .5rem .5rem;
+}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;padding:.1rem .5rem .5rem;font-size:.75rem;color:var(--ink-3)}
+.legend span{display:inline-flex;align-items:center;gap:.35rem}
+.swatch{width:14px;height:3px;border-radius:2px;background:var(--volt);display:inline-block}
+.swatch.band{height:10px;background:var(--volt-soft);border:1px solid var(--volt);border-radius:3px}
+svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.rd{
+  position:absolute; top:.55rem; right:.7rem;
+  font:.75rem/1.4 var(--mono); color:var(--ink-2);
+  background:var(--ground); border:1px solid var(--line);
+  border-radius:6px; padding:.25rem .5rem; pointer-events:none; opacity:0;
+  transition:opacity .12s;
+}
+.rd.on{opacity:1}
+
+ol.acts{list-style:none;counter-reset:a;margin:1.1rem 0 0}
+ol.acts li{
+  counter-increment:a; position:relative; padding:.8rem 0 .8rem 2.6rem;
+  border-bottom:1px solid var(--line); color:var(--ink-2); font-size:.9375rem;
+}
+ol.acts li:last-child{border-bottom:none}
+ol.acts li::before{
+  content:counter(a); position:absolute; left:0; top:.75rem;
+  width:1.65rem; height:1.65rem; border-radius:50%;
+  background:var(--surface-2); color:var(--ink-2);
+  font:600 .8125rem/1.65rem var(--mono); text-align:center;
+}
+ol.acts b{color:var(--ink);font-weight:620;display:block;margin-bottom:.15rem}
+
+.note-box{
+  background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--ink-3);
+  border-radius:0 8px 8px 0; padding:.9rem 1rem; margin:1.2rem 0;
+  font-size:.875rem; color:var(--ink-2);
+}
+.note-box b{color:var(--ink)}
+code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;border-radius:4px}
+.foot{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--line);font-size:.8125rem;color:var(--ink-3)}
+</style>
+
+<div class="wrap">
+
+  <a class="back" href="/">&larr; alle flater</a>
+  <div class="rule"></div>
+
+  <p class="eyebrow">Feltmåling ved kai · Suzuki Diagnostic System v8.00</p>
+  <h1>Girfeilen er et spenningsfall.</h1>
+
+  <div class="ident">
+    <span><b>Motor</b> Suzuki DF300 · ECM 33920-98J00</span>
+    <span><b>Driftstid</b> 483 t 34 min</span>
+    <span><b>Målt</b> 6. september 2026, 19:31–20:16</span>
+    <span><b>187 giringer</b> i to logger</span>
+  </div>
+
+  <div class="verdict">
+    <span class="tag">Konklusjon</span>
+    <h2>Girmotorkretsen faller ut når ankervinsjen trekker på et batteri som ikke er toppladet.</h2>
+    <p>Feilen ligger i <b>motorkretsen</b>, ikke i girposisjonen. To av de tre lagrede
+      hendelsene skjedde med giret riktig i nøytral og tilnærmet null avvik — noe
+      elektrisk slo ut, ikke noe mekanisk.</p>
+    <p>Alle tre kom rett etter at vinsjen hadde gått, med et batteri som ikke var fullt,
+      og trolig med kjøleskuffen i gang samtidig. Feilen kom én gang på fire år, og så
+      tre ganger på tre turer etter sommeren — samme sesong som landstrømmen ble slått av.</p>
+  </div>
+
+  <div class="tiles">
+    <div class="tile bad">
+      <span class="lbl">ESA-girmotorfeil</span>
+      <span class="val">6</span>
+      <span class="note">Var 3 den 2. august. Tre nye på 5,8 driftstimer.</span>
+    </div>
+    <div class="tile good">
+      <span class="lbl">Kommunikasjonsfeil</span>
+      <span class="val">3</span>
+      <span class="note">Uendret. Ikke fjernkontrollboksen, ikke drive-by-wire.</span>
+    </div>
+    <div class="tile good">
+      <span class="lbl">Giringer uten vinsj</span>
+      <span class="val">105</span>
+      <span class="note">Null anmerkninger, ved 58–60 °C. Giring alene utløser ikke feilen.</span>
+    </div>
+    <div class="tile warn">
+      <span class="lbl">Spenningsfall med vinsj</span>
+      <span class="val">11</span>
+      <span class="note">Av 82 giringer. Uten vinsj: null av 105.</span>
+    </div>
+  </div>
+
+  <h2 class="sec">Hva ECM-en har talt opp</h2>
+  <p class="lede">Feiltellerne står i ECM-en og nullstilles ikke. De skiller de to
+    hovedsporene fra hverandre uten at noe måtte måles.</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Teller</th><th>Kode</th><th>Betydning</th>
+      <th class="n">2. aug</th><th class="n">6. sept</th>
+    </tr></thead>
+    <tbody>
+      <tr class="hi"><td><b>ESA FAILURE(MTR)</b></td><td>8-2</td><td>Girmotor, relé, ledning</td><td class="n">3</td><td class="n"><b>6</b></td></tr>
+      <tr><td>DBW SYSTEM FAILURE</td><td>7-5</td><td>Kommunikasjon, fjernkontroll</td><td class="n">3</td><td class="n">3</td></tr>
+      <tr><td>ESA FAILURE(MOV)</td><td>8-3</td><td>Girposisjon, linkmekanikk</td><td class="n">1</td><td class="n">1</td></tr>
+      <tr><td>SPS FAILURE</td><td>1-2</td><td>Girposisjonssensor</td><td class="n">0</td><td class="n">0</td></tr>
+      <tr><td>NEUTRAL SW FAILURE</td><td>3-3</td><td>Nøytralbryter</td><td class="n">0</td><td class="n">0</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="body"><strong>Tre nye girmotorfeil, null nye kommunikasjonsfeil.</strong>
+    Det avkrefter fjernkontrollboksen og drive-by-wire, som var det andre hovedsporet.
+    Posisjonstelleren og sensortelleren står også stille, så verken linkmekanikken eller
+    girposisjonssensoren er inne i bildet.</p>
+
+  <h2 class="sec">De tre lagrede hendelsene</h2>
+  <p class="lede">ECM-en fryser to bilder per hendelse og har plass til tre. Alle tre
+    plassene er nå fylt av girmotorfeil. Kolonnen for innsugsluft sier noe om hvor lenge
+    motoren hadde gått.</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Driftstime</th><th class="n">Batteri</th><th class="n">Sylinder</th>
+      <th class="n">Innsugsluft</th><th class="n">Turtall</th>
+      <th class="n">Mål</th><th class="n">Sensor</th><th>Gir sto i</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>480 t 26 min</td><td class="n">14,65 V</td><td class="n">61 °C</td><td class="n">47 °C</td><td class="n">688</td><td class="n">2,50</td><td class="n">2,48</td><td>nøytral</td></tr>
+      <tr class="hi"><td>481 t 14 min</td><td class="n"><b>12,89 V</b></td><td class="n">54 °C</td><td class="n">43 °C</td><td class="n">656</td><td class="n">2,50</td><td class="n">2,42</td><td>nøytral</td></tr>
+      <tr><td>483 t 8 min</td><td class="n">13,62 V</td><td class="n">61 °C</td><td class="n">40 °C</td><td class="n">563</td><td class="n">3,83</td><td class="n">3,77</td><td>forover</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="body"><strong>To av tre skjedde med giret riktig i nøytral.</strong> Mål 2,50 V
+    mot sensor 2,48 og 2,42 V er tilnærmet null avvik. Aktuatoren sto akkurat der den
+    skulle, og ECM-en meldte likevel girmotorfeil. Feilen er dermed ikke at giret ikke
+    klarer å nå fram — den slår ut uavhengig av hvor giret står.</p>
+
+  <p class="body">Den tredje er hendelsen som strandet båten. Bilde 1 viser giret pent i
+    forover, mål 3,83 V og sensor 3,77 V. Bilde 2 viser mål 2,50 V mens sensoren fortsatt
+    står på 3,77. <strong>Giret kom ikke tilbake.</strong> Verkstedhåndboka beskriver
+    nøyaktig det for kode 8-2: ECM-en kutter girmotorreleet og fryser giret der det står.
+    Det fastlåste giret er altså nøddriften, ikke årsaken.</p>
+
+  <div class="note-box">
+    <b>14,65 V betyr ikke fullt batteri.</b> Det er ladespenningen dynamoen regulerer til,
+    ikke ladetilstanden. Et batteri på 70 prosent viser samme tall mens det lades. Den
+    hendelsen kom sent i turen — innsugsluft 47 grader, den varmeste av de tre — så
+    batteriet hadde kommet et stykke opp uten å være fullt. Og et øyeblikksbilde viser
+    verdien i det ECM-en fanget den, ikke bunnen av et fall som kan ha vært over på
+    brøkdelen av et sekund.
+  </div>
+
+  <h2 class="sec">Runde 1 — 105 giringer uten vinsj</h2>
+  <p class="lede">Rolige giringer med lange hold i forover, ved 58 til 60 graders
+    sylindertemperatur. Det er midt i vinduet der alle tre feilene har skjedd.
+    <strong>Null anmerkninger.</strong> Sensoren nådde 3,81 til 3,83 V hver gang.</p>
+
+  <figure>
+    <div class="chartbox">
+      <div class="charttitle">Batterispenning — runde 1, uten vinsj</div>
+      <div class="legend">
+        <span><i class="swatch"></i> median per 4 s</span>
+        <span><i class="swatch band"></i> laveste per 4 s</span>
+      </div>
+      <svg id="c1" viewBox="0 0 760 260" role="img"
+           aria-label="Batterispenningen stiger fra 13,7 V til 14,58 V gjennom de første fem minuttene, og ligger deretter stabilt."></svg>
+      <div class="rd" id="r1"></div>
+    </div>
+    <figcaption><b>Spenningen stiger gjennom hele opptaket.</b> Det er signaturen på et
+      utladet batteri: dynamoen holdes nede fordi batteriet trekker mye ladestrøm, og
+      først når det nærmer seg fullt får anlegget stige til reguleringspunktet på 14,6 V.
+      Batteriet var altså underladet ved ankomst, og brukte fire til fem minutter på å
+      komme seg.</figcaption>
+  </figure>
+
+  <h2 class="sec">Runde 2 — 82 giringer med ankervinsjen</h2>
+  <p class="lede">Samme motor, samme temperatur, samme giringer. Eneste forskjell er at
+    vinsjen gikk. Den gikk bare med <strong>liten last</strong>.</p>
+
+  <figure>
+    <div class="chartbox">
+      <div class="charttitle">Batterispenning — med ankervinsj</div>
+      <div class="legend">
+        <span><i class="swatch"></i> median per 4 s</span>
+        <span><i class="swatch band"></i> laveste per 4 s</span>
+      </div>
+      <svg id="c2" viewBox="0 0 760 260" role="img"
+           aria-label="Batterispenningen faller gjentatte ganger fra 14,5 V ned mot 13,2 V i perioden der ankervinsjen ble kjørt."></svg>
+      <div class="rd" id="r2"></div>
+    </div>
+    <figcaption><b>Elleve giringer fikk et fall på 0,80 til 1,32 V.</b> Uten vinsjen skjedde
+      det ikke én eneste gang på 105 giringer. Bunnpunktet var 13,18 V. Giringene gikk
+      likevel perfekt — sensoren nådde 3,81 til 3,83 V hver gang — så vi produserte riktig
+      type belastning, men ikke nok av den.</figcaption>
+  </figure>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Måling</th><th class="n">Uten vinsj</th><th class="n">Med vinsj</th></tr></thead>
+    <tbody>
+      <tr><td>Giringer</td><td class="n">105</td><td class="n">82</td></tr>
+      <tr><td>Varighet</td><td class="n">686 s</td><td class="n">453 s</td></tr>
+      <tr class="hi"><td><b>Spenningsfall over 0,8 V</b></td><td class="n"><b>0</b></td><td class="n"><b>11</b></td></tr>
+      <tr><td>Laveste batterispenning</td><td class="n">13,48 V</td><td class="n">13,18 V</td></tr>
+      <tr><td>Sylindertemperatur</td><td class="n">58–60 °C</td><td class="n">58–60 °C</td></tr>
+      <tr><td>Giringer som ikke nådde fram</td><td class="n">0</td><td class="n">0</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 class="sec">Hva som ble utelukket</h2>
+  <p class="body"><strong>Kommunikasjon og fjernkontrollboks.</strong> Kode 7-5 står
+    uendret på 3 mens girmotorfeilen har gått fra 3 til 6.</p>
+  <p class="body"><strong>Girposisjonssensoren.</strong> Teller 1-2 står på 0. Sensoren
+    leser 2,50 V i nøytral, midt i justeringsspec 2,46–2,54 V, og fulgte jevnt gjennom
+    hele vandringen i 187 giringer.</p>
+  <p class="body"><strong>Linkmekanikken.</strong> Posisjonstelleren 8-3 står uendret på 1.</p>
+  <p class="body"><strong>Giring i seg selv.</strong> 105 giringer i feilens eget
+    temperaturvindu, med lange hold i forover, uten en eneste anmerkning.</p>
+
+  <h2 class="sec">Tiltak</h2>
+  <ol class="acts">
+    <li><b>La landstrømmen stå på igjen.</b>
+      Den ene tingen som ble endret i sommer. Båten går fra land med et batteri som ikke
+      er fullt, og da blir det samme strømtrekket til et dypere fall.</li>
+    <li><b>Ikke gir mens vinsjen går, eller rett etterpå.</b>
+      Vent noen sekunder til spenningen har kommet seg. Det er selve fallet
+      girmotorkretsen ikke tåler.</li>
+    <li><b>Få batteriet kapasitetstestet.</b>
+      Ladevanen forklarer at det begynte, men et batteri som har mistet kapasitet gir
+      samme bilde — og ville tatt feilen tilbake selv med landstrøm på.</li>
+    <li><b>Les ut ECM-en igjen etter noen turer.</b>
+      Telleren står på 6. Står den fortsatt på 6, er saken avgjort uten at feilen må
+      fremkalles. Går den opp, gjenstår håndbokas Chart 29 — viklingsmotstand
+      0,3–10 Ω, releet og kretsen, som krever multimeter.</li>
+  </ol>
+
+  <h2 class="sec">Metode, og to ting som var feil underveis</h2>
+  <p class="body">Alt er lest ut av motorens egen ECM. Ingen demontering, ingen
+    multimeter, ingen tur. To Data Logger-økter på 0,2 sekunders oppløsning med kanalene
+    <code>SHIFT POSITION SNSR OUTPUT</code>, <code>ESA TRGT POSITION</code>,
+    <code>BATTERY VOLTAGE</code>, <code>ENGINE SPEED</code>, <code>NEUTRAL SWITCH</code>
+    og <code>CYLINDER TEMPERATURE</code>, pluss en Service Data-utlesing med alle 217
+    parametere og en USB-fangst på 302 015 pakker.</p>
+
+  <div class="note-box">
+    <b>Adapteren hadde flyttet seg til COM4.</b> SDS fant ikke motoren, og «Reset» hjalp
+    ikke. Avslørt av USB-fangsten: 6 pakker med varighet 0,000000 sekunder mens SDS hadde
+    kjørt i flere minutter — programmet hadde aldri åpnet porten. Etter bytte til COM1:
+    454 pakker på sekunder. Portnummeret sjekkes nå <b>før</b> SDS startes.
+  </div>
+
+  <div class="note-box">
+    <b>To terskler i analyseverktøyet var satt etter håndboka, ikke etter denne motoren.</b>
+    Spranggrensa på 0,40 V flagget 105 av 105 giringer — aktuatoren flytter seg faktisk
+    inntil 1,19 V per 0,2 s. Og forover-grensa på 3,70 V flagget fem friske giringer som
+    «forbi forover»; denne ECM-en kommanderer 3,83 V og sensoren lander på 3,81–3,87 V.
+    Begge er nå kalibrert mot måling og kontrollert begge veier: de sier ja til
+    augustfeilene (3,65 og 3,67 V for kort, 3,95 V for langt) og nei til alle kveldens
+    friske giringer. <b>En terskel som slår ut på alt måler ingenting.</b>
+  </div>
+
+  <div class="foot">
+    Rådata, rapporter og full økt-oppsummering ligger i feltmappa på laptopen.
+    Grenseverdier fra verkstedhåndbok DF300, kapittel 3: nøytral 2,46–2,54 V og
+    innkobling forover 2,9–3,1 V (s. 3-77), nøddriften ved kode 8-2 (s. 3-48),
+    feilsøkingsskjema Chart 29 (s. 3-110).
+  </div>
+
+</div>
+
+<script>
+const R1 = [[0,13.7,13.55],[4,13.7,13.55],[8,13.7,13.62],[12,13.7,13.55],[16,13.62,13.48],[20,13.7,13.48],[24,13.7,13.55],[28,13.7,13.62],[32,13.7,13.62],[36,13.7,13.55],[40,13.7,13.62],[44,13.66,13.48],[48,13.7,13.62],[52,13.77,13.7],[56,13.84,13.7],[60,13.84,13.77],[64,13.84,13.77],[68,13.88,13.77],[72,13.84,13.7],[76,13.77,13.62],[80,13.84,13.77],[84,13.92,13.84],[88,13.92,13.77],[92,13.92,13.84],[96,13.99,13.84],[100,13.99,13.84],[104,13.84,13.7],[108,13.92,13.7],[112,13.99,13.84],[116,14.06,13.92],[120,14.06,13.99],[124,14.06,13.92],[128,14.06,13.99],[132,14.06,13.84],[136,13.92,13.77],[140,14.06,13.99],[144,14.14,14.06],[148,14.14,14.06],[152,14.21,14.14],[156,14.21,14.14],[160,14.28,14.14],[164,14.06,13.99],[168,14.21,13.99],[172,14.28,14.14],[176,14.36,14.21],[180,14.36,14.28],[184,14.36,14.21],[188,14.43,14.28],[192,14.06,13.77],[196,14.28,13.92],[200,14.32,14.14],[204,14.5,14.14],[208,14.32,14.21],[212,14.5,14.28],[216,14.32,14.21],[220,14.36,14.14],[224,14.14,13.84],[228,14.36,14.14],[232,14.5,14.36],[236,14.43,14.14],[240,14.5,14.21],[244,14.5,14.43],[248,14.46,14.21],[252,14.28,14.21],[256,14.43,14.21],[260,14.43,14.28],[264,14.43,14.21],[268,14.58,14.43],[272,14.58,14.36],[276,14.43,14.28],[280,14.43,14.14],[284,14.36,13.99],[288,14.58,14.5],[292,14.5,14.21],[296,14.62,14.58],[300,14.58,14.43],[304,14.58,14.5],[308,14.5,14.28],[312,14.25,14.14],[316,14.5,14.28],[320,14.58,14.5],[324,14.58,14.43],[328,14.58,14.5],[332,14.58,14.43],[336,14.5,14.28],[340,14.43,14.21],[344,14.43,14.06],[348,14.62,14.5],[352,14.58,14.36],[356,14.58,14.5],[360,14.54,14.21],[364,14.5,14.28],[368,14.5,14.28],[372,14.36,14.14],[376,14.58,14.43],[380,14.58,14.43],[384,14.58,14.5],[388,14.5,14.28],[392,14.58,14.28],[396,14.58,14.21],[400,14.25,14.06],[404,14.58,14.36],[408,14.58,14.28],[412,14.5,14.28],[416,14.58,14.43],[420,14.58,14.5],[424,14.43,14.21],[428,14.28,14.14],[432,14.43,14.06],[436,14.58,14.36],[440,14.58,14.43],[444,14.5,14.21],[448,14.54,14.36],[452,14.58,14.36],[456,14.5,14.36],[460,14.43,14.14],[464,14.5,14.21],[468,14.58,14.5],[472,14.46,14.28],[476,14.58,14.5],[480,14.58,14.36],[484,14.58,14.43],[488,14.28,13.99],[492,14.58,14.43],[496,14.54,14.14],[500,14.58,14.43],[504,14.58,14.5],[508,14.43,14.21],[512,14.58,14.43],[516,14.28,13.99],[520,14.43,14.14],[524,14.5,14.21],[528,14.58,14.36],[532,14.58,14.21],[536,14.5,14.21],[540,14.58,14.5],[544,14.43,14.14],[548,14.43,14.06],[552,14.58,14.5],[556,14.58,14.5],[560,14.58,14.43],[564,14.5,14.43],[568,14.5,14.43],[572,14.58,14.43],[576,14.32,14.21],[580,14.43,14.21],[584,14.58,14.14],[588,14.43,14.28],[592,14.58,14.28],[596,14.62,14.28],[600,14.5,14.21],[604,14.36,13.99],[608,14.39,14.06],[612,14.58,14.43],[616,14.58,14.5],[620,14.58,14.43],[624,14.58,14.5],[628,14.58,14.43],[632,14.5,14.36],[636,14.32,14.14],[640,14.5,14.43],[644,14.58,14.43],[648,14.54,14.5],[652,14.58,14.5],[656,14.58,14.43],[660,14.58,14.43],[664,14.32,14.21],[668,14.43,14.21],[672,14.54,14.43],[676,14.58,14.36],[680,14.58,14.43],[684,14.58,14.5]];
+const V2 = [[0,13.62,13.48],[4,13.73,13.62],[8,13.92,13.7],[12,14.21,13.99],[16,14.14,13.99],[20,14.5,14.36],[24,14.54,14.43],[28,14.58,14.43],[32,14.58,14.5],[36,14.58,14.43],[40,14.58,14.5],[44,14.36,14.21],[48,14.46,14.21],[52,14.58,14.43],[56,14.58,14.5],[60,14.58,14.43],[64,14.58,14.43],[68,14.36,14.06],[72,14.43,13.99],[76,14.36,14.06],[80,14.28,14.06],[84,13.91,13.48],[88,13.7,13.33],[92,13.59,13.4],[96,13.55,13.33],[100,13.8,13.48],[104,14.06,13.62],[108,14.28,13.84],[112,14.14,13.84],[116,14.28,14.14],[120,14.36,14.21],[124,14.54,13.48],[128,13.62,13.4],[132,13.55,13.33],[136,13.77,13.4],[140,13.77,13.4],[144,13.84,13.48],[148,13.7,13.33],[152,13.44,13.33],[156,13.4,13.33],[160,13.55,13.33],[164,13.66,13.4],[168,14.14,13.92],[172,14.21,14.06],[176,13.44,13.33],[180,13.4,13.26],[184,13.62,13.4],[188,13.8,13.62],[192,13.77,13.7],[196,14.1,13.84],[200,14.21,14.14],[204,14.28,14.21],[208,13.99,13.4],[212,14.1,13.84],[216,13.99,13.48],[220,13.77,13.62],[224,13.92,13.77],[228,14.21,13.99],[232,13.55,13.33],[236,13.7,13.48],[240,13.99,13.7],[244,13.52,13.33],[248,13.4,13.26],[252,13.4,13.18],[256,13.7,13.48],[260,14.36,13.77],[264,14.58,14.5],[268,14.28,13.99],[272,14.21,13.99],[276,14.5,14.21],[280,14.28,14.14],[284,13.77,13.48],[288,14.14,13.92],[292,14.58,14.43],[296,14.43,13.99],[300,14.28,14.06],[304,14.58,14.43],[308,14.36,13.99],[312,14.14,13.99],[316,14.5,14.21],[320,14.39,14.14],[324,14.5,14.28],[328,14.43,14.21],[332,14.25,13.99],[336,14.28,13.92],[340,13.99,13.77],[344,13.84,13.48],[348,14.06,13.84],[352,13.62,13.4],[356,13.55,13.4],[360,13.77,13.48],[364,14.06,13.77],[368,14.25,13.77],[372,14.1,13.84],[376,14.43,14.14],[380,14.39,14.21],[384,14.5,14.21],[388,14.58,14.43],[392,14.28,14.14],[396,14.32,14.14],[400,14.28,14.14],[404,14.43,14.21],[408,14.5,14.21],[412,14.28,14.06],[416,14.36,14.14],[420,14.54,14.28],[424,14.58,14.43],[428,14.28,14.14],[432,14.5,14.36],[436,14.58,14.5],[440,14.58,14.43],[444,14.58,14.43],[448,14.58,14.43],[452,14.58,14.43]];
+
+const W=760,H=260,L=44,R=12,T=12,B=30;
+const YMIN=13.0,YMAX=14.8;
+const NS="http://www.w3.org/2000/svg";
+
+function el(n,a){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;}
+
+function draw(svgId,rdId,data){
+  const svg=document.getElementById(svgId), rd=document.getElementById(rdId);
+  const tmax=data[data.length-1][0];
+  const x=t=>L+(t/tmax)*(W-L-R);
+  const y=v=>T+(1-(v-YMIN)/(YMAX-YMIN))*(H-T-B);
+
+  for(let v=13.0;v<=14.8001;v+=0.4){
+    svg.appendChild(el("line",{x1:L,x2:W-R,y1:y(v).toFixed(1),y2:y(v).toFixed(1),
+      stroke:"var(--line)","stroke-width":1}));
+    const tx=el("text",{x:L-8,y:(y(v)+4).toFixed(1),"text-anchor":"end",
+      fill:"var(--ink-3)","font-size":11,"font-family":"var(--mono)"});
+    tx.textContent=v.toFixed(1);
+    svg.appendChild(tx);
+  }
+  for(let t=0;t<=tmax;t+=120){
+    const tx=el("text",{x:x(t).toFixed(1),y:H-10,"text-anchor":"middle",
+      fill:"var(--ink-3)","font-size":11,"font-family":"var(--mono)"});
+    tx.textContent=(t/60)+" min";
+    svg.appendChild(tx);
+  }
+
+  let up="",dn="";
+  data.forEach((d,i)=>{up+=(i?"L":"M")+x(d[0]).toFixed(1)+" "+y(d[1]).toFixed(1)+" ";});
+  for(let i=data.length-1;i>=0;i--){dn+="L"+x(data[i][0]).toFixed(1)+" "+y(data[i][2]).toFixed(1)+" ";}
+  svg.appendChild(el("path",{d:up+dn+"Z",fill:"var(--volt-soft)",stroke:"none"}));
+  svg.appendChild(el("path",{d:up,fill:"none",stroke:"var(--volt)","stroke-width":2,
+    "stroke-linejoin":"round","stroke-linecap":"round"}));
+
+  const cross=el("line",{y1:T,y2:H-B,stroke:"var(--ink-3)","stroke-width":1,opacity:0});
+  const dot=el("circle",{r:4,fill:"var(--volt)",stroke:"var(--surface)","stroke-width":2,opacity:0});
+  svg.appendChild(cross);svg.appendChild(dot);
+
+  function at(ev){
+    const r=svg.getBoundingClientRect();
+    const px=((ev.touches?ev.touches[0].clientX:ev.clientX)-r.left)/r.width*W;
+    const t=Math.max(0,Math.min(tmax,(px-L)/(W-L-R)*tmax));
+    let best=data[0];
+    for(const d of data){if(Math.abs(d[0]-t)<Math.abs(best[0]-t))best=d;}
+    cross.setAttribute("x1",x(best[0]));cross.setAttribute("x2",x(best[0]));
+    cross.setAttribute("opacity",1);
+    dot.setAttribute("cx",x(best[0]));dot.setAttribute("cy",y(best[1]));
+    dot.setAttribute("opacity",1);
+    const m=Math.floor(best[0]/60), s=String(best[0]%60).padStart(2,"0");
+    rd.textContent=m+":"+s+"  median "+best[1].toFixed(2)+" V  laveste "+best[2].toFixed(2)+" V";
+    rd.classList.add("on");
+  }
+  function off(){cross.setAttribute("opacity",0);dot.setAttribute("opacity",0);rd.classList.remove("on");}
+  svg.addEventListener("pointermove",at);
+  svg.addEventListener("pointerleave",off);
+  svg.addEventListener("touchmove",at,{passive:true});
+  svg.addEventListener("touchend",off);
+}
+
+draw("c1","r1",R1);
+draw("c2","r2",V2);
+</script>
+
+</body>
+</html>
