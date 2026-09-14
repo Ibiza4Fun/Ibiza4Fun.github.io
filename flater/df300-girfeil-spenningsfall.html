@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DF300 — girfeilen er et spenningsfall</title>
-<meta name="description" content="Feltmåling ved kai 6. september 2026: 187 giringer, to logger og ECM-ens egne feilbilder viser at girfeilen utløses av spenningsfall fra ankervinsjen på et batteri som ikke er toppladet.">
+<meta name="description" content="Feltmåling ved kai 6. september 2026: 201 giringer, to logger og ECM-ens egne feilbilder viser at girfeilen utløses av spenningsfall fra ankervinsjen på et batteri som ikke er toppladet.">
 <meta name="theme-color" content="#0A0C10">
 
 <meta name="flate:kind" content="rapport">
@@ -189,7 +189,7 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
     <span><b>Motor</b> Suzuki DF300 · ECM 33920-98J00</span>
     <span><b>Driftstid</b> 483 t 34 min</span>
     <span><b>Målt</b> 6. september 2026, 19:31–20:16</span>
-    <span><b>187 giringer</b> i to logger</span>
+    <span><b>201 giringer</b> i to logger</span>
   </div>
 
   <div class="verdict">
@@ -216,13 +216,13 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
     </div>
     <div class="tile good">
       <span class="lbl">Giringer uten vinsj</span>
-      <span class="val">105</span>
+      <span class="val">107</span>
       <span class="note">Null anmerkninger, ved 58–60 °C. Giring alene utløser ikke feilen.</span>
     </div>
     <div class="tile warn">
       <span class="lbl">Spenningsfall med vinsj</span>
       <span class="val">11</span>
-      <span class="note">Av 82 giringer. Uten vinsj: null av 105.</span>
+      <span class="note">Av 94 giringer. Uten vinsj: null av 107.</span>
     </div>
   </div>
 
@@ -291,7 +291,7 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
     brøkdelen av et sekund.
   </div>
 
-  <h2 class="sec">Runde 1 — 105 giringer uten vinsj</h2>
+  <h2 class="sec">Runde 1 — 107 giringer uten vinsj</h2>
   <p class="lede">Rolige giringer med lange hold i forover, ved 58 til 60 graders
     sylindertemperatur. Det er midt i vinduet der alle tre feilene har skjedd.
     <strong>Null anmerkninger.</strong> Sensoren nådde 3,81 til 3,83 V hver gang.</p>
@@ -314,7 +314,7 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
       komme seg.</figcaption>
   </figure>
 
-  <h2 class="sec">Runde 2 — 82 giringer med ankervinsjen</h2>
+  <h2 class="sec">Runde 2 — 94 giringer med ankervinsjen</h2>
   <p class="lede">Samme motor, samme temperatur, samme giringer. Eneste forskjell er at
     vinsjen gikk. Den gikk bare med <strong>liten last</strong>.</p>
 
@@ -330,7 +330,7 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
       <div class="rd" id="r2"></div>
     </div>
     <figcaption><b>Elleve giringer fikk et fall på 0,80 til 1,32 V.</b> Uten vinsjen skjedde
-      det ikke én eneste gang på 105 giringer. Bunnpunktet var 13,18 V. Giringene gikk
+      det ikke én eneste gang på 107 giringer. Bunnpunktet var 13,18 V. Giringene gikk
       likevel perfekt — sensoren nådde 3,81 til 3,83 V hver gang — så vi produserte riktig
       type belastning, men ikke nok av den.</figcaption>
   </figure>
@@ -339,7 +339,7 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
   <table>
     <thead><tr><th>Måling</th><th class="n">Uten vinsj</th><th class="n">Med vinsj</th></tr></thead>
     <tbody>
-      <tr><td>Giringer</td><td class="n">105</td><td class="n">82</td></tr>
+      <tr><td>Giringer</td><td class="n">107</td><td class="n">94</td></tr>
       <tr><td>Varighet</td><td class="n">686 s</td><td class="n">453 s</td></tr>
       <tr class="hi"><td><b>Spenningsfall over 0,8 V</b></td><td class="n"><b>0</b></td><td class="n"><b>11</b></td></tr>
       <tr><td>Laveste batterispenning</td><td class="n">13,48 V</td><td class="n">13,18 V</td></tr>
@@ -386,38 +386,93 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
       det er referansen resten av rapporten måler mot.</figcaption>
   </figure>
 
-  <h2 class="sec">Alle 187 giringene samlet</h2>
-  <p class="lede">Hvor giret faktisk stanset, i begge loggene. <strong>187 giringer landet
-    på ni ulike verdier.</strong> Revers traff 1,31 V alle 27 gangene, uten et eneste
-    avvik.</p>
+  <h2 class="sec">Driftet noe med vinsjen? Nei.</h2>
+  <p class="lede">De to rundene må holdes fra hverandre, ellers skjuler tallene nettopp
+    det de skal vise. Runde 1 er referansen for hva som er normalt — der gikk ingen vinsj.
+    Spørsmålet er om runde 2 viser at giret begynner å drifte når anlegget belastes.</p>
 
   <div class="scroll">
   <table>
-    <thead><tr><th>Stilling</th><th class="n">Antall</th><th class="n">Område</th>
-      <th class="n">Spredning</th><th class="n">Håndbokas spec</th></tr></thead>
+    <thead><tr><th>Stilling</th><th class="n">Uten vinsj</th><th class="n">Med vinsj</th>
+      <th class="n">Område uten</th><th class="n">Område med</th><th class="n">Håndbokas spec</th></tr></thead>
     <tbody>
-      <tr><td>Forover</td><td class="n">69</td><td class="n">3,81–3,87 V</td><td class="n">0,06 V</td><td class="n">ca. 3,7 V</td></tr>
-      <tr><td>Nøytral</td><td class="n">91</td><td class="n">2,48–2,54 V</td><td class="n">0,06 V</td><td class="n">2,46–2,54 V</td></tr>
-      <tr><td>Revers</td><td class="n">27</td><td class="n">1,31 V</td><td class="n">0,00 V</td><td class="n">ca. 1,3 V</td></tr>
+      <tr><td>Forover</td><td class="n">37</td><td class="n">35</td><td class="n">3,81–3,87 V</td><td class="n">3,81–3,85 V</td><td class="n">ca. 3,7 V</td></tr>
+      <tr><td>Nøytral</td><td class="n">53</td><td class="n">45</td><td class="n">2,48–2,54 V</td><td class="n">2,48–2,52 V</td><td class="n">2,46–2,54 V</td></tr>
+      <tr><td>Revers</td><td class="n">17</td><td class="n">14</td><td class="n">1,31 V</td><td class="n">1,31 V</td><td class="n">ca. 1,3 V</td></tr>
     </tbody>
   </table>
   </div>
 
   <figure>
     <div class="chartbox">
-      <div class="charttitle">Hvor giret stanset i forover — 69 giringer</div>
+      <div class="charttitle">Hvor giret stanset i forover — de to rundene mot hverandre</div>
+      <div class="legend">
+        <span><i class="swatch"></i> uten vinsj (37)</span>
+        <span><i class="swatch tgt"></i> med vinsj (35)</span>
+      </div>
       <svg id="c5" viewBox="0 0 760 250" role="img"
-           aria-label="De 69 giringene inn i forover samler seg på fire verdier mellom 3,81 og 3,87 volt. De tre verdiene fra augustfeilene, 3,65, 3,67 og 3,95 volt, ligger utenfor gruppen."></svg>
+           aria-label="Giringene inn i forover fordeler seg likt i de to rundene, med tyngdepunkt på 3,81 volt. Augustverdien 3,95 volt ligger utenfor begge."></svg>
     </div>
-    <figcaption><b>De tre verdiene fra augustfeilene faller utenfor alt vi målte i kveld.</b>
-      3,65 og 3,67 V er kortere enn noen av de 69 friske giringene inn i forover, og
-      3,95 V er lengre. Det er dette som gjør de gamle feilbildene til avvik og ikke til
-      normal spredning.</figcaption>
+    <figcaption><b>Fordelingene er praktisk talt like.</b> Vinsjrunden ligger om noe litt
+      tettere samlet. Giringene med registrert spenningsfall brukte 0,40 s i median —
+      nøyaktig som de uten. <b>Aktuatoren merket ingenting til belastningen.</b></figcaption>
   </figure>
+
+  <div class="note-box">
+    <b>Det er ikke resultatet vi lette etter, og det er verdt å si rett ut.</b>
+    Forventningen var at vinsjen skulle få ting til å begynne å drifte — tregere
+    vandring, kortere innkobling, større avvik. Ingenting av det skjedde. Elleve
+    giringer falt sammen med et spenningsfall på 0,80 til 1,32 V, og de gikk like fort
+    og like langt som de andre 83.
+    <br><br>
+    To lesninger står igjen. Enten var fallet ikke dypt nok — vi bunnet på 13,18 V mot
+    12,89 V ved den verste lagrede feilen. Eller så <b>finnes det ingen drift å se</b>:
+    ECM-en overvåker girmotorkretsen og slår ut på en terskel, og under den terskelen
+    ser alt helt normalt ut. Det siste passer med at to av de tre septemberfeilene skjedde
+    med giret riktig i nøytral, uten noe avvik i det hele tatt.
+    <br><br>
+    Er det en terskel, har det en praktisk følge: <b>det nytter ikke å lete etter
+    forvarsler i loggen.</b> Enten slår feilen ut, eller så ser loggen frisk ut.
+  </div>
 
   <p class="body">Nøytralstillingen ligger midt i håndbokas justeringsspec på
     2,46 til 2,54 V. <strong>Girlinken er altså riktig justert</strong>, og det stemmer
     med at posisjonstelleren 8-3 ikke har rørt seg.</p>
+
+  <h2 class="sec">Og hva med 3,95 V?</h2>
+  <p class="lede">Ett tall i de gamle feilbildene lar seg ikke forklare av et
+    spenningsfall uten videre: <strong>3,95 V ligger over</strong> normal forover-stilling,
+    og en svak aktuator skal komme for kort, ikke for langt.</p>
+
+  <div class="note-box">
+    <b>Først en retting.</b> Denne rapporten påsto tidligere at 3,65 og 3,67 V fra
+    augustbildene var avvik. <b>Det er feil.</b> Det er verdien sensoren har mens
+    aktuatoren er <i>underveis</i>: 45 målepunkter i kveldens to logger ligger i båndet
+    3,55 til 3,75 V, alle i bevegelse, og giret sto aldri stille der — ikke én gang på
+    201 giringer. ECM-ens første bilde fanget rett og slett aktuatoren i farten.
+    <b>Da står bare 3,95 V igjen som et ekte avvik.</b>
+  </div>
+
+  <p class="body"><strong>To forklaringer, fysisk helt forskjellige.</strong></p>
+  <p class="body"><strong>Giret gikk virkelig forbi.</strong> Mulig hvis ECM-en kuttet
+    girmotorreleet midt i vandringen og aktuatoren rullet videre på egen fart. Kveldens
+    data setter en grense: i 201 giringer kom giret aldri forbi 3,87 V.</p>
+  <p class="body"><strong>Eller avlesningen er forskjøvet, ikke giret.</strong>
+    Girposisjonssensoren er et potensiometer som mates fra ECM-ens 5 V og måles mot
+    ECM-ens jord. Går det flere hundre ampere gjennom en delt jordledning, løftes
+    sensorens jordreferanse i forhold til ECM-ens, og ECM-en måler for høyt uten at giret
+    har flyttet seg. 0,12 V er riktig størrelsesorden for det. Denne forklaringen dekker
+    også noe den første ikke gjør: at to av septemberfeilene slo ut med giret riktig i
+    nøytral.</p>
+
+  <div class="note-box">
+    <b>Dette kan avgjøres med én kanal.</b> ECM-en eksponerer ikke referansespenningen,
+    men den har <code>TRIM ANGLE SNSR OUTPUT</code> — samme type potensiometer, samme
+    5 V-forsyning, og trimmen står stille mens man girer ved kai. Logg den ved siden av
+    girsensoren neste gang. <b>Hopper begge samtidig når vinsjen drar, er det den felles
+    referansen som flytter seg, og giret har aldri beveget seg. Hopper bare girsensoren,
+    gikk giret virkelig forbi.</b>
+  </div>
 
   <p class="body">Turtallet lå på 656 o/min i median både i gir og i nøytral, med hele
     spennet 469 til 781. <strong>Å legge i gir ved kai belaster ikke motoren målbart</strong>
@@ -452,9 +507,9 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
     uendret på 3 mens girmotorfeilen har gått fra 3 til 6.</p>
   <p class="body"><strong>Girposisjonssensoren.</strong> Teller 1-2 står på 0. Sensoren
     leser 2,50 V i nøytral, midt i justeringsspec 2,46–2,54 V, og fulgte jevnt gjennom
-    hele vandringen i 187 giringer.</p>
+    hele vandringen i 201 giringer.</p>
   <p class="body"><strong>Linkmekanikken.</strong> Posisjonstelleren 8-3 står uendret på 1.</p>
-  <p class="body"><strong>Giring i seg selv.</strong> 105 giringer i feilens eget
+  <p class="body"><strong>Giring i seg selv.</strong> 107 giringer i feilens eget
     temperaturvindu, med lange hold i forover, uten en eneste anmerkning.</p>
 
   <h2 class="sec">Tiltak</h2>
@@ -491,7 +546,7 @@ code{font:.875em var(--mono);background:var(--surface-2);padding:.1em .35em;bord
 
   <div class="note-box">
     <b>To terskler i analyseverktøyet var satt etter håndboka, ikke etter denne motoren.</b>
-    Spranggrensa på 0,40 V flagget 105 av 105 giringer — aktuatoren flytter seg faktisk
+    Spranggrensa på 0,40 V flagget alle giringene — aktuatoren flytter seg faktisk
     inntil 1,19 V per 0,2 s. Og forover-grensa på 3,70 V flagget fem friske giringer som
     «forbi forover»; denne ECM-en kommanderer 3,83 V og sensoren lander på 3,81–3,87 V.
     Begge er nå kalibrert mot måling og kontrollert begge veier: de sier ja til
