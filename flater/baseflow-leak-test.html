@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grunnflowen under lekkasjetesten</title>
+<meta name="description" content="Hvorfor den røde grunnflow-kurven på lekkasjevakten sto stille i over en time etter at en simulert lekkasje startet 26. september 2026, og når den skal løfte seg.">
+<meta name="theme-color" content="#0A0C10">
+
+<meta name="flate:kind" content="rapport">
+<meta name="flate:date" content="2026-09-26">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+</head>
+<body>
+
+<style>
+:root{
+  --ground:#FCFCFB; --surface:#F5F3EF; --surface-2:#EDEAE3;
+  --ink:#1B1917; --ink-2:#5D584E; --ink-3:#8A8377;
+  --line:#DED9D0; --line-2:#CBC5B9;
+  --flow:#2a78d6; --flow-soft:rgba(42,120,214,0.14);
+  --floor:#B3261E; --leak:#eb6834; --leak-soft:rgba(235,104,52,0.12);
+  --ok:#2E6B3E; --ok-bg:#EDF5EE; --ok-line:#C2DBC8;
+  --warn-bg:#FBF3E2; --warn-line:#E8D6AE;
+  --sans:ui-sans-serif,"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"SF Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#161513; --surface:#1E1C19; --surface-2:#272420;
+    --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
+    --line:#312E29; --line-2:#413D36;
+    --flow:#3987e5; --flow-soft:rgba(57,135,229,0.18);
+    --floor:#E0655C; --leak:#d95926; --leak-soft:rgba(217,89,38,0.16);
+    --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
+    --warn-bg:#26200F; --warn-line:#453A1B;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#161513; --surface:#1E1C19; --surface-2:#272420;
+  --ink:#EDEAE4; --ink-2:#A9A296; --ink-3:#7A7468;
+  --line:#312E29; --line-2:#413D36;
+  --flow:#3987e5; --flow-soft:rgba(57,135,229,0.18);
+  --floor:#E0655C; --leak:#d95926; --leak-soft:rgba(217,89,38,0.16);
+  --ok:#5BA86F; --ok-bg:#152318; --ok-line:#26402C;
+  --warn-bg:#26200F; --warn-line:#453A1B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ground);color:var(--ink);font:400 16px/1.6 var(--sans);padding:0 1rem 5rem}
+.wrap{max-width:52rem;margin:0 auto}
+.back{display:inline-block;margin:1.6rem 0 0;font-size:.8125rem;color:var(--ink-3);text-decoration:none}
+.back:hover{color:var(--flow)}
+.eyebrow{font:600 .6875rem/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin:1.6rem 0 .7rem}
+h1{font-size:clamp(1.7rem,5.5vw,2.6rem);line-height:1.12;letter-spacing:-.02em;font-weight:650;margin-bottom:1rem}
+.lede{color:var(--ink-2);font-size:1rem;max-width:44rem;padding-bottom:1.5rem;border-bottom:1px solid var(--line)}
+h2{font-size:1.25rem;font-weight:620;letter-spacing:-.01em;margin:2.6rem 0 .6rem}
+p{color:var(--ink-2);font-size:.9375rem;margin-bottom:.9rem;max-width:44rem}
+p strong{color:var(--ink);font-weight:600}
+.answer{background:var(--ok-bg);border:1px solid var(--ok-line);border-radius:12px;padding:1.2rem 1.3rem;margin:1.8rem 0}
+.answer p{margin-bottom:.5rem}
+.answer p:last-child{margin-bottom:0}
+.tag{display:inline-block;font:600 .6875rem/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--ok);margin-bottom:.6rem}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));gap:.7rem;margin:1.2rem 0 .4rem}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.85rem .9rem;display:flex;flex-direction:column;gap:.3rem}
+.tile .lbl{font:500 .6875rem/1.3 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.tile .val{font-size:1.7rem;line-height:1;font-weight:640;letter-spacing:-.02em}
+.tile .val .u{font-size:.85rem;font-weight:500;color:var(--ink-3);margin-left:.15rem}
+.tile .note{font-size:.75rem;line-height:1.4;color:var(--ink-3)}
+figure{margin:1.3rem 0 .6rem}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.6rem .4rem .3rem}
+.chart svg{display:block;width:100%;height:auto}
+figcaption{font-size:.8125rem;color:var(--ink-3);margin-top:.55rem;max-width:44rem}
+svg text{font-family:var(--sans);fill:var(--ink-3)}
+svg .ax{stroke:var(--line-2);stroke-width:1}
+svg .grid{stroke:var(--line);stroke-width:1}
+svg .fl{fill:none;stroke:var(--flow);stroke-width:1.6;stroke-linejoin:round}
+svg .flarea{fill:var(--flow-soft);stroke:none}
+svg .p10{fill:none;stroke:var(--floor);stroke-width:2.6}
+svg .p10f{fill:none;stroke:var(--floor);stroke-width:2.6;stroke-dasharray:6 5}
+svg .leakzone{fill:var(--leak-soft);stroke:none}
+svg .win{fill:none;stroke:var(--ink-2);stroke-width:1.4}
+svg .old{fill:var(--floor);opacity:.13}
+svg .lbl{fill:var(--ink-2);font-size:12px}
+svg .lblb{fill:var(--ink);font-size:12px;font-weight:600}
+svg .red{fill:var(--floor)}
+svg .bar{fill:var(--flow);opacity:.75}
+svg .barq{fill:var(--floor);opacity:.8}
+svg .mark{stroke:var(--ink);stroke-width:1.6;stroke-dasharray:4 3}
+.cake{display:flex;gap:1.1rem;align-items:center;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:12px;padding:1.2rem 1.3rem;margin:2.6rem 0 0}
+.cake svg{flex:0 0 auto;width:64px;height:64px}
+.cake p{margin:0;color:var(--ink)}
+.small{font-size:.8125rem;color:var(--ink-3)}
+</style>
+
+<div class="wrap">
+  <a class="back" href="/">&larr; alle flater</a>
+
+  <div class="eyebrow">Øyna vassverk · lekkasjetest 26. september 2026</div>
+  <h1>Hvorfor den røde kurven sto stille</h1>
+  <p class="lede">Bård simulerte en lekkasje lørdag kveld. Vannføringen gikk opp, men den røde kurven for grunnflow på lekkasjevakten rikket seg nesten ikke på over en time. Her er forklaringen, med tall og figurer. Den er skrevet for Ivar, som fulgte med.</p>
+
+  <div class="answer">
+    <span class="tag">Kort svar</span>
+    <p><strong>Kurven står ikke fast. Den er treg med vilje.</strong> Den ser på de siste to timene og viser det laveste nivået vannføringen faller til. Så lenge en god del av de to timene er fra før lekkasjen startet, holder de rolige øyeblikkene fra den tiden kurven nede.</p>
+    <p>Med en jevn lekkasje tar det i underkant av to timer før kurven begynner å stige. For denne testen er det regnet ut til <strong>rundt kl. 19:49</strong>. Rundt kl. 20:07 skal den ligge på omtrent 1,7 L/min.</p>
+  </div>
+
+  <h2>De to kurvene</h2>
+  <p>Den <strong>blå</strong> kurven er hvor mye vann som renner akkurat nå. Den hopper opp hver gang noen tapper vann og faller ned igjen mellom tappingene.</p>
+  <p>Den <strong>røde</strong> kurven er <strong>grunnflowen</strong>: gulvet vannføringen faller ned til i de rolige øyeblikkene. Mellom tappingene renner det bare litt, fordi et vannverk alltid har noen små drypp og svinn. En lekkasje renner hele døgnet, også når ingen tapper, så den løfter gulvet. Det er derfor gulvet er et godt tegn på lekkasje.</p>
+
+  <figure>
+    <div class="chart">
+      <svg viewBox="0 0 600 220" role="img" aria-label="Skisse: blå vannføring med topper og rolige dykk, rød linje langs bunnen av dykkene">
+        <line class="ax" x1="40" y1="190" x2="585" y2="190"/>
+        <line class="ax" x1="40" y1="20" x2="40" y2="190"/>
+        <path class="flarea" d="M40,176 L70,176 L78,70 L88,176 L130,172 L138,110 L150,176 L200,176 L210,40 L222,60 L232,176 L290,174 L300,120 L312,176 L360,176 L372,80 L380,90 L392,176 L450,172 L460,130 L470,176 L520,176 L532,60 L545,176 L585,176 L585,190 L40,190 Z"/>
+        <polyline class="fl" points="40,176 70,176 78,70 88,176 130,172 138,110 150,176 200,176 210,40 222,60 232,176 290,174 300,120 312,176 360,176 372,80 380,90 392,176 450,172 460,130 470,176 520,176 532,60 545,176 585,176"/>
+        <line class="p10" x1="40" y1="176" x2="585" y2="176"/>
+        <text class="lbl" x="206" y="32">tapping</text>
+        <text class="lbl" x="326" y="166">rolig: bare små drypp</text>
+        <text class="lblb red" x="470" y="202">grunnflow (gulvet)</text>
+        <text x="8" y="24" style="font-size:11px">L/min</text>
+      </svg>
+    </div>
+    <figcaption>Skisse. Den blå kurven hopper med tappingen. Den røde følger bunnen av de rolige dykkene.</figcaption>
+  </figure>
+
+  <h2>Hva som skjedde i testen</h2>
+  <p>Tallene er regnet ut på nytt to ganger, uavhengig av systemet selv: én gang fra målingene på anlegget, og én gang fra de samme dataene som lekkasjevakt-siden viser. Begge ga samme svar som siden, 0,38 L/min kl. 19:16. Kurven var altså riktig regnet ut.</p>
+  <div class="tiles">
+    <div class="tile"><span class="lbl">Lekkasjen startet</span><span class="val">18:01</span><span class="note">etterpå under 0,5 L/min bare 1,2 % av tiden</span></div>
+    <div class="tile"><span class="lbl">Kl. 19:16</span><span class="val">23<span class="u">%</span></span><span class="note">av to-timersvinduet var rolige målinger fra før lekkasjen</span></div>
+    <div class="tile"><span class="lbl">Forventet løft</span><span class="val">~19:49</span><span class="note">når de rolige målingene er under 10 %</span></div>
+    <div class="tile"><span class="lbl">Rundt 20:07</span><span class="val">~1,7<span class="u">L/min</span></span><span class="note">der kurven er ventet å legge seg</span></div>
+  </div>
+  <p><strong>Om tallet 0,31.</strong> Når vannet står helt stille, fører ikke systemet opp et nytt tall. Det bruker i stedet gulvet som ble målt i natt, som var 0,31. Den røde kurven på 0,31 før testen er altså nattens måling, ikke en måling fra akkurat det øyeblikket.</p>
+
+  <h2>Vinduet på to timer</h2>
+  <p>Kurven regner hele tiden ut nivået som <strong>de laveste 10 %</strong> av målingene de siste to timene ligger under. Det gjør den rolig, slik at én enkelt tapping ikke flytter den. Men det betyr også at kurven først løfter seg når mindre enn 10 % av de to timene er rolige øyeblikk fra før lekkasjen.</p>
+
+  <figure>
+    <div class="chart">
+      <svg viewBox="0 0 640 270" role="img" aria-label="Tidslinje fra 17:15 til 20:15 med to-timersvinduet ved 19:16 og ved 19:49">
+        <line class="grid" x1="40" y1="188" x2="625" y2="188"/>
+        <line class="ax" x1="40" y1="222" x2="625" y2="222"/>
+        <line class="ax" x1="40" y1="30" x2="40" y2="222"/>
+        <rect class="leakzone" x="190" y="30" width="435" height="192"/>
+        <text class="lblb" x="198" y="46" style="fill:var(--leak)">lekkasje fra 18:01</text>
+        <path class="flarea" d="M40,208 L60,208 L66,120 L74,208 L100,206 L108,150 L118,208 L140,208 L150,90 L160,208 L178,206 L190,188 L200,140 L210,188 L222,100 L232,170 L245,75 L258,188 L270,130 L285,160 L298,70 L312,180 L325,110 L340,188 L352,95 L366,150 L380,188 L392,80 L406,170 L420,120 L430,160 L430,222 L40,222 Z"/>
+        <polyline class="fl" points="40,208 60,208 66,120 74,208 100,206 108,150 118,208 140,208 150,90 160,208 178,206 190,188 200,140 210,188 222,100 232,170 245,75 258,188 270,130 285,160 298,70 312,180 325,110 340,188 352,95 366,150 380,188 392,80 406,170 420,120 430,160"/>
+        <polyline class="p10" points="40,208 430,205"/>
+        <line class="grid" x1="40" y1="137" x2="625" y2="137"/>
+        <polyline class="p10f" points="430,205 540,204 566,158 599,135 625,135"/>
+        <line class="ax" x1="430" y1="30" x2="430" y2="222" style="stroke-dasharray:3 3"/>
+        <text class="lblb" x="436" y="60">nå 19:16</text>
+        <rect class="old" x="43" y="232" width="147" height="10"/>
+        <rect class="win" x="43" y="232" width="387" height="10"/>
+        <text class="lbl" x="44" y="258">vindu 17:16–19:16: 23 % rolige målinger fra før lekkasjen</text>
+        <rect class="old" x="150" y="246" width="40" height="10" style="opacity:.25"/>
+        <rect class="win" x="150" y="246" width="386" height="10"/>
+        <text class="lbl" x="300" y="268" text-anchor="middle">vindu 17:49–19:49: rolige målinger under 10 %</text>
+        <text class="lblb red" x="470" y="128">kurven løfter seg</text>
+        <text x="6" y="141" style="font-size:11px">1,7</text>
+        <text x="6" y="212" style="font-size:11px">0,3</text>
+      </svg>
+    </div>
+    <figcaption>Skisse av testen. Det orange feltet er lekkasjen. Stolpene under viser to-timersvinduet. Den skraverte røde delen er tiden før lekkasjen, og den holder kurven nede. Kl. 19:16 var 38 % av vinduet fra før 18:01, og 23 % var rolige målinger. Rundt 19:49 er de rolige målingene under 10 %. Da begynner kurven å stige, og den er ventet å ligge rundt 1,7 L/min ved 20:07. Den stiplede delen er forventet, ikke målt.</figcaption>
+  </figure>
+
+  <h2>De to toppene tidligere i dag</h2>
+  <p><strong>Den lille toppen rundt kl. 13</strong> er en kjent effekt når det renner mye vann hele tiden. Målingene i vinduet deler seg da i to klumper: noen rolige øyeblikk nede ved gulvet og veldig mange med høy vannføring. Grensen for de laveste 10 % havner i gapet mellom klumpene. Kl. 12:56 var de rolige øyeblikkene 9,9 % av vinduet, rett under 10 %, og kurven hoppet opp til 0,55. Ett nytt rolig øyeblikk dro den ned igjen.</p>
+
+  <figure>
+    <div class="chart">
+      <svg viewBox="0 0 600 210" role="img" aria-label="To klumper av målinger og hvor 10-prosentgrensen havner">
+        <line class="ax" x1="30" y1="170" x2="290" y2="170"/>
+        <rect class="barq" x="50" y="120" width="16" height="50"/>
+        <rect class="bar" x="130" y="70" width="16" height="100"/>
+        <rect class="bar" x="150" y="40" width="16" height="130"/>
+        <rect class="bar" x="170" y="60" width="16" height="110"/>
+        <rect class="bar" x="190" y="90" width="16" height="80"/>
+        <line class="mark" x1="58" y1="30" x2="58" y2="170"/>
+        <text class="lblb" x="30" y="24">11 % rolige</text>
+        <text class="lbl" x="30" y="192">kurven ligger på 0,3</text>
+        <line class="ax" x1="320" y1="170" x2="580" y2="170"/>
+        <rect class="barq" x="340" y="130" width="16" height="40"/>
+        <rect class="bar" x="420" y="70" width="16" height="100"/>
+        <rect class="bar" x="440" y="40" width="16" height="130"/>
+        <rect class="bar" x="460" y="60" width="16" height="110"/>
+        <rect class="bar" x="480" y="90" width="16" height="80"/>
+        <line class="mark" x1="428" y1="30" x2="428" y2="170"/>
+        <text class="lblb" x="320" y="24">9,9 % rolige</text>
+        <text class="lbl" x="320" y="192">kurven hopper opp (0,55 kl. 12:56)</text>
+      </svg>
+    </div>
+    <figcaption>Skisse. Den røde stolpen er de rolige øyeblikkene, de blå er tiden med mye vann. Den stiplede streken er grensen for de laveste 10 %. En liten endring i andelen rolige øyeblikk flytter grensen fra den ene klumpen til den andre.</figcaption>
+  </figure>
+  <p>Det er allerede bestemt å glatte kurven på skjermen, slik at den ikke hopper slik. Selve lekkasjesjekken skal være uendret. Det er ikke bygget ennå.</p>
+  <p><strong>Den høye toppen rundt kl. 16:45</strong>, opp til 1,58 og ned igjen etter et par minutter, var ikke vannet. Kl. 16:37 ble systemet startet på nytt for en oppdatering. Etter en omstart fylles to-timersminnet opp igjen fra lagrede data, og der er det færre målepunkter enn i de nye målingene som kommer inn hvert sekund. De første minuttene veide derfor den travle vannføringen for tungt. Toppen var en bieffekt av omstarten, ikke et ekte gulv. Det følges opp.</p>
+
+  <h2>Det som faktisk betyr noe</h2>
+  <p>Den røde kurven er det man <strong>ser</strong>. Lekkasjevaktene som varsler og kan stoppe pumpa, har egne regler og venter ikke på kurven. Under testen ble det også sjekket hva vaktene gjør og når de slår til. Det svaret er viktigere enn kurven, og det følges opp for seg.</p>
+  <p class="small">Skrevet 26. september 2026 rundt kl. 19:30, mens testen pågikk. Tallene er fra da.</p>
+
+  <div class="cake">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="10" y="34" width="44" height="22" rx="4" fill="#eb6834"/>
+      <rect x="10" y="40" width="44" height="5" fill="#FCFCFB" opacity=".7"/>
+      <rect x="18" y="22" width="4" height="12" fill="#2a78d6"/>
+      <rect x="30" y="22" width="4" height="12" fill="#B3261E"/>
+      <rect x="42" y="22" width="4" height="12" fill="#2a78d6"/>
+      <ellipse cx="20" cy="18" rx="2.4" ry="4" fill="#D0A215"/>
+      <ellipse cx="32" cy="18" rx="2.4" ry="4" fill="#D0A215"/>
+      <ellipse cx="44" cy="18" rx="2.4" ry="4" fill="#D0A215"/>
+    </svg>
+    <p><strong>Og Ivar: gratulerer med 62-årsdagen på forskudd!</strong> Vi håper 12. desember blir en god dag, med flere lys på kaka enn topper på vannkurven.</p>
+  </div>
+</div>
+</body>
+</html>
