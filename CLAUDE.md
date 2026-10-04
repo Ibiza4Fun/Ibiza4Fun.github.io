@@ -169,5 +169,11 @@ Do not rediscover these. Fix them or leave them, but say which.
   `tools/check-secrets.sh` says so in its own comments and it is still an easy trap to
   walk into. Use a different key shape, and assemble it at run time so no complete
   pattern is ever written to a file.
+- **A change to shared CSS or JS is served stale for at least one load.** `sw.js` serves
+  every non-navigation request cache first, so a browser that visited before a deploy gets
+  the old `guide.css` on its first visit after it. Measured 2026-10-04: rules added to
+  `guide.css` for a new page did not reach Bård's browser, and the photos rendered full size.
+  A page that needs a new style should carry it in its own `<style>` (as
+  `df300-no-start-field-guide.html` does) or link the stylesheet with a version query.
 - **`flater/example-guide.html`** is the template, marked `temporary`. Delete it once a
   second real guide exists.

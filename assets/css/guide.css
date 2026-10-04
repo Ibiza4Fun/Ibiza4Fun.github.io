@@ -173,40 +173,6 @@
   align-self: center;
 }
 
-/* A photo with numbered marks drawn on it. The numbers in the caption use the
-   same amber badge as the marks on the photo, so the two read as one. */
-.gfig {
-  margin: 0.25rem clamp(0.9rem, 4vw, 1.25rem) 1rem;
-}
-.gfig img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--line);
-}
-.gfig figcaption {
-  margin-top: 0.5rem;
-  color: var(--dim);
-  line-height: 1.6;
-}
-
-.mk {
-  display: inline-grid;
-  place-items: center;
-  width: 1.45em;
-  height: 1.45em;
-  margin-right: 0.2em;
-  border: 1px solid #000;
-  border-radius: 50%;
-  background: #FFB000;
-  color: #000;
-  font-size: 0.85em;
-  font-weight: 700;
-  font-style: normal;
-  line-height: 1;
-  vertical-align: 0.05em;
-}
-
 .gfoot {
   padding: 1rem clamp(0.9rem, 4vw, 1.25rem);
   display: flex;
