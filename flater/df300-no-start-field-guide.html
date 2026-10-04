@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Startfeil DF300 — feilsøking ved båten</title>
+<meta name="description" content="Nøytralbryteren på DF300: vrikketest med SDS, målinger med multimeter og hva hvert svar betyr. Bilder av motoren med nummererte markeringer.">
+<meta name="theme-color" content="#FFFFFF">
+
+<meta name="flate:kind" content="guide">
+<meta name="flate:date" content="2026-10-04">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/guide.css">
+
+<!-- Leses ute ved båten, i dagslys. Lys bakgrunn uansett hva telefonen står
+     på, som feltsida for girfeilen. -->
+<style>
+  :root {
+    --ground:  #FFFFFF;
+    --card:    #F4F7FA;
+    --card-hi: #E9EFF5;
+    --line:    #C3CDD8;
+    --text:    #05090D;
+    --dim:     #3A4753;
+    --faint:   #64717F;
+    --accent:  #14506B;
+    --accent-bg: #DCEAF2;
+    --temp:    #7A4E0A;
+    --done:    #14603F;
+    color-scheme: light;
+  }
+</style>
+</head>
+<body>
+
+<div class="gwrap">
+
+  <div class="gtop">
+    <a class="gback" href="/">&larr; alle flater</a>
+    <div class="gtitle">Startfeil DF300 — feilsøking ved båten</div>
+    <div class="progress">
+      <div class="bar"><span id="fill"></span></div>
+      <div class="ptext"><span id="pdone">0</span>/<span id="ptotal">0</span></div>
+    </div>
+  </div>
+
+  <p class="gintro">
+    <strong>Du er hendene, jeg er mekanikeren.</strong> Motorstyringen leser
+    nøytralbryteren som OFF selv om giret står i nøytral, og da får startreleet aldri
+    strøm. I dag finner vi ut om det er pluggen, bryteren eller plasseringen av den.
+    PC-en står koblet til motoren hele tiden, og alt du lagrer i SDS leser jeg med en
+    gang. Regn med en til to timer.
+  </p>
+
+  <div class="gcallout crit">
+    <p><strong>Kortslutt aldri nøytralbryteren</strong>, heller ikke for å teste. Den er
+      sperren mot å starte i gir.</p>
+    <p><strong>Tenningen av</strong> når du tar ut eller setter inn et relé, en sikring
+      eller en plugg.</p>
+    <p><strong>Med tenningen på: fingrene vekk fra girarmen og girstaget.</strong>
+      Girmotoren kan flytte dem.</p>
+    <p><strong>Ikke trykk START</strong> før jeg ber om det, og bare med kjølevann på
+      motoren.</p>
+    <p><strong>Aldri i SDS:</strong> ACTUATOR TEST, BCM INITIALIZATION, SYSTEM
+      CALIBRATION eller REPROGRAMMING.</p>
+  </div>
+
+  <h2 class="gsection">Ta med</h2>
+
+  <div class="gcallout">
+    <dl>
+      <dt>Laptop</dt><dd>fulladet, med lader</dd>
+      <dt>SDS-kabel</dt><dd>USB, adapter, 4-pins</dd>
+      <dt>Mobilnett</dt><dd>delt fra telefonen</dd>
+      <dt>Multimeter</dt><dd>med pipetone</dd>
+      <dt>Verktøy</dt><dd>stjerneskrutrekker, nebbtang</dd>
+      <dt>Forbruk</dt><dd>kontaktspray, dielektrisk fett</dd>
+      <dt>Småtteri</dt><dd>en kopp, strips, en pose</dd>
+      <dt>Valgfritt</dt><dd>ny bryter 37721-93J00</dd>
+    </dl>
+    <p style="margin-top:0.75rem">Åpne denne sida én gang hjemme før du drar. Da ligger
+      bildene lagret på telefonen og vises også uten dekning. Sjekk at den nye bryteren
+      passer en DF300 fra 2007 før du bestiller den.</p>
+  </div>
+
+  <h2 class="gsection">Kartet</h2>
+
+  <figure class="gfig">
+    <img src="/assets/img/df300-no-start/overview.jpg" width="1200" height="900"
+      alt="Girholderen sett fra siden: girmotoren øverst, girstaget på skrå, og den svarte skåla under girarmen der nøytralbryteren sitter. Fem nummererte markeringer.">
+    <figcaption>
+      <span class="mk">1</span>Klipsen og skiven på girarmen. Her tas girstaget av i
+      del&nbsp;6.
+      <span class="mk">2</span>Girstaget.
+      <span class="mk">3</span>Nøytralbryteren sitter her, under enden av girarmen.
+      <span class="mk">4</span>Girmotoren.
+      <span class="mk">5</span>Girstagets andre ende, på girmotoren. Den rører du ikke.
+    </figcaption>
+  </figure>
+
+  <figure class="gfig">
+    <img src="/assets/img/df300-no-start/switch.jpg" width="1200" height="727"
+      alt="Nærbilde av nøytralbryteren: det svarte bryterhuset med én skrue, en metallarm med en rustflekk, og en hvit kloss på girarmen ved siden av. Fire nummererte markeringer.">
+    <figcaption>
+      Nærbilde fra 4. oktober, slik jeg leser det.
+      <span class="mk">A</span>Skruen som holder bryterhuset.
+      <span class="mk">B</span>Bryterens fjærarm, med en rustflekk.
+      <span class="mk">C</span>Den hvite klossen på girarmen. I nøytral skal den trykke
+      fjærarmen inn.
+      <span class="mk">D</span>Girarmen.
+      Det gjennomsiktige fettet rundt bryteren er lagt på fra fabrikken (håndboka
+      s.&nbsp;11-16).
+    </figcaption>
+  </figure>
+
+  <h2 class="gsection">Del 1 — Rigg · 15 min</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">1</span>
+        <span class="stext">Batteriet fulladet, eller laderen tilkoblet.
+          <span class="snote">Si fra om laderen står på. Den endrer spenningen i filene.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">2</span>
+        <span class="stext">Girspaken i nøytral. Platen på nødstoppbryteren.
+          Motordekselet av.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">3</span>
+        <span class="stext">Koble SDS-kabelen til motoren, slik som 17. september.
+          <span class="snote">Displaypluggen er frakoblet så lenge SDS-kabelen står i. Den kobles til igjen helt til slutt.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">4</span>
+        <span class="stext">Enhetsbehandling → Porter: <strong>«USB Serial Port»</strong>
+          skal stå på <strong>COM1</strong>. Koble PC-en til mobilnett.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">5</span>
+        <span class="stext">Start Claude og skriv: <strong>«Ta opp igjen startfeilen på
+          båten, og les feltguiden fra 4. oktober.»</strong> Skriv så
+          <strong>«klar»</strong>.
+          <span class="snote">Da starter jeg overvåkeren. Alt du lagrer i SDS fra nå av, leser og forklarer jeg med en gang.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">6</span>
+        <span class="stext">Tenning på — <strong>ikke START</strong>. Start SDS → trykk
+          <strong>Reset</strong>. Main Menu skal være hvit, ikke grå.</span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Del 2 — Les ut · 5 min</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">7</span>
+        <span class="stext">SERVICE DATA → <strong>All Service Data</strong> → Save(F3) →
+          OK → Save. Skriv <strong>«lagret»</strong>.
+          <span class="snote">Jeg sjekker at NEUTRAL SWITCH fortsatt står på OFF, at girsensoren viser ca. 2,5 V, og at feiltellerne er som 17. september.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">8</span>
+        <span class="stext">Les NEUTRAL SWITCH på skjermen selv. Står den på
+          <strong>ON</strong>, si fra før du gjør noe mer.
+          <span class="snote">Da kommer og går feilen, og vrikketesten i del 3 blir hovedtesten.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Del 3 — Vrikketesten · 10 min</h2>
+
+  <div class="gcallout">
+    <p>Tenningen står på, og <strong>ingenting kobles fra</strong>. Testen viser om
+      signalet hopper til ON når ledningen, pluggen eller bryteren beveges. Du ser det
+      på skjermen, og loggen tar fem målinger i sekundet.</p>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">9</span>
+        <span class="stext">Finn pluggen til bryteren: følg kabelen fra bryterhuset
+          <span class="mk">A</span>. To ledninger, <strong>gul/grønn</strong> og
+          <strong>brun</strong>. <strong>Ikke koble den fra.</strong>
+          <span class="snote">Kabelen er bundet sammen med ledningen fra girmotoren (håndboka s. 11-15). Finner du ikke pluggen, hopp over steg 13.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">10</span>
+        <span class="stext">Lukk Service Data. DATA LOGGER → Setup → huk av
+          <code>NEUTRAL SWITCH</code> · <code>SHIFT POSITION SNSR OUTPUT</code> ·
+          <code>BATTERY VOLTAGE</code> · <code>ENGINE SPEED</code> → Monitor →
+          <strong>Go</strong>. Se at telleren løper.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">11</span>
+        <span class="stext"><strong>0–30 s:</strong> ikke rør noe.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">12</span>
+        <span class="stext"><strong>30–50 s:</strong> vrikk forsiktig på kabelen mellom
+          bryteren og pluggen. <strong>50–70 s:</strong> slipp.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">13</span>
+        <span class="stext"><strong>70–90 s:</strong> vrikk forsiktig på pluggen, fram og
+          tilbake. Ikke dra den fra hverandre. <strong>90–110 s:</strong> slipp.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">14</span>
+        <span class="stext"><strong>110–130 s:</strong> trykk lett på fjærarmen
+          <span class="mk">B</span> med skaftet på en skrutrekker, i samme retning som den
+          hvite klossen <span class="mk">C</span> trykker.
+          <span class="snote">Med skaftet, ikke med fingeren. Hold hånda unna girarmen.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">15</span>
+        <span class="stext">Stop → <strong>Save(F3)</strong> → OK → Save. Skriv
+          <strong>«lagret»</strong>, og si hva du så på skjermen.</span>
+      </button>
+    </li>
+  </ol>
+
+  <div class="gcallout">
+    <p><strong>Hva svaret betyr.</strong></p>
+    <p>ON da du vrikket kabelen eller pluggen: det er pluggen eller ledningen.</p>
+    <p>ON da du trykket på fjærarmen: bryteren virker, men den hvite klossen trykker den
+      ikke langt nok inn.</p>
+    <p>OFF hele tiden: bryteren er død, eller den får ikke strøm.</p>
+    <p>Uansett svar går vi videre til del 4. Svaret avgjør hvor vi leter.</p>
+  </div>
+
+  <h2 class="gsection">Del 4 — Pluggen og målingene · 20 min</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">16</span>
+        <span class="stext"><strong>Tenning av.</strong> Koble fra pluggen til
+          nøytralbryteren.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">17</span>
+        <span class="stext">Se inn i begge halvdelene: vann, grønt belegg, hvitt salt,
+          bøyde eller tilbaketrukne pinner? Fortell meg hva du ser.
+          <span class="snote">Ta gjerne et bilde.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">18</span>
+        <span class="stext"><strong>Tenning på.</strong> Mål <strong>gul/grønn</strong> i
+          halvdelen som går inn i bunten (ikke den som går til bryteren), mot jord på en
+          blank bolt i motorblokka. Ventet: <strong>ca. 12 V</strong>. Så
+          <strong>tenning av</strong>.
+          <span class="snote">Ikke press proben hardt inn i hullet. Den kan spre kontakten. Viser den 0 V, mangler strømmen inn: stopp og si fra.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">19</span>
+        <span class="stext">Multimeteret på pipetone. Mål mellom <strong>gul/grønn</strong>
+          og <strong>brun</strong> i halvdelen som går til bryteren. En frisk bryter
+          <strong>piper</strong> her, for giret står i nøytral.
+          <span class="snote">Ikke rør girarmen. Den skal stå der girmotoren parkerte den.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">20</span>
+        <span class="stext">Piper det ikke: hold probene der og trykk fjærarmen
+          <span class="mk">B</span> lett inn med skrutrekkerskaftet. Si om det piper
+          da.</span>
+      </button>
+    </li>
+  </ol>
+
+  <div class="gcallout">
+    <p><strong>Hva målingene betyr.</strong></p>
+    <p>12 V inn og pipetone i nøytral: bryteren og strømmen er friske. Feilen sitter i
+      pluggen eller i den brune ledningen videre. Gå til del 5.</p>
+    <p>Piper bare når fjærarmen trykkes lenger inn: bryteren virker, men sitter for
+      langt unna. Gå til del 6.</p>
+    <p>Piper ikke i det hele tatt: bryteren er død. Gå til del 6.</p>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">21</span>
+        <span class="stext">Mens bryterpluggen er åpen: finn pluggen til
+          <strong>girmotoren</strong> i samme bunt. Se etter det samme: vann, belegg,
+          pinner.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">22</span>
+        <span class="stext">For girfeilen, med tenningen fortsatt av: koble fra
+          girmotorpluggen og mål motstanden mellom de to pinnene på motorsiden. Ventet:
+          <strong>0,3–10 Ω</strong> (håndboka s. 3-80). <strong>Koble den til igjen med
+          en gang.</strong>
+          <span class="snote">Hold probene mot hverandre først, og trekk det tallet fra. Det er ledningenes egen motstand. Slår du på tenningen med girmotorpluggen ute, teller motorstyringen en ny girfeil.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Del 5 — Rens pluggen · 10 min</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">23</span>
+        <span class="stext">Spray begge halvdelene med kontaktspray. La det tørke.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">24</span>
+        <span class="stext">Et tynt lag dielektrisk fett i pluggen. Sett den sammen til den
+          klikker.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">25</span>
+        <span class="stext"><strong>Tenning på.</strong> Se på NEUTRAL SWITCH i SDS.
+          <strong>ON:</strong> gå til del 7. <strong>OFF:</strong> si fra, så måler vi
+          videre på den brune ledningen sammen.</span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Del 6 — Bryteren og girarmen · 20 min</h2>
+
+  <div class="gcallout crit">
+    <p><strong>Sikring ④ ut før girstaget tas av</strong>, og tenningen står av til
+      sikringen er tilbake. Ellers kan girmotoren skades (håndboka s. 4-16), og
+      motorstyringen teller nye girfeil.</p>
+  </div>
+
+  <figure class="gfig">
+    <img src="/assets/img/df300-no-start/fuse-box.jpg" width="1200" height="900"
+      alt="Sikringsboksen med lokket av: to like reléer side om side og sikringer rundt. Startreleet og sikring nummer 4 er rammet inn.">
+    <figcaption>
+      <span class="mk">S</span>Startreleet.
+      <span class="mk">H</span>Hovedreleet. La det sitte. Det gir strøm til
+      motorstyringen.
+      <span class="mk">G</span>Sikring ④, 15&nbsp;A, girmotoren.
+    </figcaption>
+  </figure>
+
+  <figure class="gfig">
+    <img src="/assets/img/df300-no-start/fuse-label.jpg" width="1200" height="512"
+      alt="Etiketten på lokket til sikringsboksen, med STARTER RELAY, MAIN RELAY og 15A nummer 4 rammet inn.">
+    <figcaption>
+      Etiketten på lokket. Sjekk mot den før du trekker noe. De to blå
+      15&nbsp;A-sikringene ser like ut, og den andre (③) er gasspjeldet.
+    </figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">26</span>
+        <span class="stext"><strong>Tenning av.</strong> Ta ut sikring ④
+          <span class="mk">G</span>.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">27</span>
+        <span class="stext">Ta av klipsen og skiven <span class="mk">1</span> (kartet
+          øverst), og løft girstaget av girarmen. Legg klips og skive i koppen.
+          <span class="snote">Bare denne enden. Enden ved girmotoren blir sittende.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">28</span>
+        <span class="stext">Pipetone mellom gul/grønn og brun på bryterhalvdelen mens du
+          fører girarmen for hånd: nøytral → det ene giret → nøytral → det andre giret →
+          nøytral. Ventet: <strong>pipetone bare i nøytral</strong>.
+          <span class="snote">Går det tungt inn i gir, drei propellen litt for hånd samtidig. Tenningen er av, så det er trygt.</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">29</span>
+        <span class="stext">Si hvor i bevegelsen pipetonen kommer og går. Se etter bøyd
+          fjærarm, løs skrue <span class="mk">A</span>, sprekk eller slitasje på den hvite
+          klossen <span class="mk">C</span>, og merker etter at armen har gått for langt.
+          Ta bilder.
+          <span class="snote">Ved én av girfeilene i august gikk girarmen lenger enn normalt: 3,95 V mot vanlig høyst 3,87 V. Håndboka nevner skade på girsensorens arm som mulig årsak til nøytralbryterfeil (s. 3-105).</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <div class="gcallout crit">
+    <p><strong>Ikke juster, bøy eller bytt noe før vi har sett på det sammen.</strong>
+      Håndboka sier: sjekk bryterens plassering først, og bytt den bare hvis det ikke
+      hjelper (s. 4-16).</p>
+    <p><strong>Kravet før staget går på igjen:</strong> pipetone i nøytral, og brudd i
+      begge girene. Nøytralbryteren er sperren mot å starte i gir.</p>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">30</span>
+        <span class="stext">Sett sammen i denne rekkefølgen: girstaget på girarmen med
+          skive og klips, så pluggen, så sikring ④.
+          <span class="snote">Klipsen skal låse helt.</span>
+        </span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">Del 7 — Bekreft og avslutt · 10 min</h2>
+
+  <ol class="steps">
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">31</span>
+        <span class="stext"><strong>Tenning på.</strong> NEUTRAL SWITCH skal stå på
+          <strong>ON</strong>, og girsensoren på ca. 2,5 V. All Service Data → Save(F3).
+          Skriv <strong>«lagret»</strong>.</span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">32</span>
+        <span class="stext">Startprøve <strong>bare med kjølevann</strong> på motoren.
+          Uten det venter vi til båten er på vannet.
+          <span class="snote">ON i SDS er nok til å vite at sperren er borte. Check Engine 4-2 forsvinner først når motoren har gått (håndboka s. 3-50).</span>
+        </span>
+      </button>
+    </li>
+    <li>
+      <button class="step" type="button" aria-pressed="false">
+        <span class="num">33</span>
+        <span class="stext"><strong>Tenning av.</strong> Koble fra SDS, koble til
+          displaypluggen igjen, og sett på motordekselet.</span>
+      </button>
+    </li>
+  </ol>
+
+  <h2 class="gsection">To feil — én årsak?</h2>
+
+  <div class="gcallout">
+    <p>Girfeilen fra august og startfeilen nå kan henge sammen. Målingene i dag sier
+      hvordan.</p>
+    <p><strong>Irr eller vann i begge pluggene, eller girmotoren utenfor
+      0,3–10 Ω:</strong> da kan de to feilene ha samme rot i pluggene de deler plass
+      med.</p>
+    <p><strong>Bryteren forskjøvet eller armen skadet:</strong> trolig en følge av at
+      girarmen gikk for langt i august. Samme hendelse, ikke samme elektriske feil.</p>
+    <p><strong>Bare bryteren eller bare dens plugg:</strong> to separate saker.
+      Girfeilen følges da opp som før, med batteriet og vinsjen under last.</p>
+  </div>
+
+  <h2 class="gsection">Ring en Suzuki-mekaniker hvis</h2>
+
+  <div class="gcallout">
+    <p>girholderen eller girsensoren må justeres. Da må girmotoren av.</p>
+    <p>noe i BCM må kalibreres eller initialiseres.</p>
+    <p>motoren drar rundt, men ikke starter.</p>
+    <p>du blir usikker underveis.</p>
+  </div>
+
+  <div class="gfoot">
+    <button class="reset" type="button" id="reset">Nullstill</button>
+    <span>avhukingen huskes på denne telefonen</span>
+  </div>
+
+</div>
+
+<script src="/assets/js/guide.js" defer></script>
+<script src="/assets/js/offline.js" defer></script>
+</body>
+</html>
