@@ -52,6 +52,13 @@
   .box p { margin: 0.4rem 0; }
   .box ul { margin: 0.4rem 0; }
   code { padding: 0 0.2em; background: var(--card); font: 0.88em/1.4 ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+  .diagram { margin: 1rem 0 1.25rem; }
+  .diagram svg { display: block; width: 100%; height: auto; border: 1px solid var(--line); background: #FFFFFF; }
+  .dg text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 12px; fill: var(--text); }
+  .dg .sm { font-size: 11px; fill: var(--dim); }
+  .dg .hd { font-size: 12.5px; font-weight: 700; }
+  .dg .wr { font-size: 11px; font-weight: 700; fill: var(--warn); }
+  .dg .bd { font-size: 10px; font-weight: 700; fill: #000; }
   .mk {
     display: inline-block;
     min-width: 1.45em;
@@ -138,6 +145,141 @@ også uten dekning.</p>
   </figcaption>
 </figure>
 
+<h2>Koblingsskjemaet</h2>
+
+<p>Nøytralbryteren er en bryter i serie med startreleet. Tenningen gir strøm inn på gul/grønn.
+Når girarmen trykker bryteren inn i nøytral, går strømmen ut på brun til startreleet og til
+motorstyringen. Uten strøm på brun kan releet aldri trekke, uansett hva motorstyringen
+bestemmer.</p>
+
+<figure class="diagram">
+  <svg class="dg" viewBox="0 0 360 560" role="img" aria-labelledby="sk-t sk-d">
+    <title id="sk-t">Koblingsskjema for nøytralbryteren</title>
+    <desc id="sk-d">Gul/grønn går fra tenningsbryteren gjennom en 2-pins plugg til nøytralbryteren. Brun går fra bryteren tilbake gjennom pluggen til startreleets spole og til motorstyringen, pinne 21. Grønn/svart går fra startreleets spole til motorstyringen, pinne 23, som kobler den til jord når START trykkes. Steg 18 måler gul/grønn over pluggen, steg 19 måler gjennom bryteren under pluggen.</desc>
+
+    <!-- wires first, so boxes and the plug sit on top of them -->
+    <path d="M60 54 V460 H98" fill="none" stroke="#E2C400" stroke-width="4"/>
+    <path d="M60 54 V460 H98" fill="none" stroke="#2F8A3E" stroke-width="4" stroke-dasharray="3 9"/>
+    <path d="M166 460 H205 V120 H256" fill="none" stroke="#7A4A26" stroke-width="4"/>
+    <path d="M205 314 H232" fill="none" stroke="#7A4A26" stroke-width="4"/>
+    <circle cx="205" cy="314" r="4.5" fill="#7A4A26"/>
+    <path d="M310 120 V232" fill="none" stroke="#2F8A3E" stroke-width="4"/>
+    <path d="M310 120 V232" fill="none" stroke="#05090D" stroke-width="4" stroke-dasharray="3 9"/>
+
+    <rect x="8" y="12" width="150" height="42" rx="4" fill="#F4F7FA" stroke="#3A4753"/>
+    <text x="83" y="30" text-anchor="middle" class="hd">Tenningsbryteren</text>
+    <text x="83" y="46" text-anchor="middle" class="sm">i cockpit</text>
+
+    <text x="70" y="84" class="hd">gul/grønn (Y/G)</text>
+    <text x="70" y="99" class="sm">12 V med tenningen på.</text>
+    <text x="70" y="114" class="sm">Samme linje går til</text>
+    <text x="70" y="128" class="sm">motorstyringen og BCM.</text>
+
+    <text x="197" y="200" text-anchor="end" class="hd">brun (Br)</text>
+    <text x="197" y="214" text-anchor="end" class="sm">12 V i nøytral</text>
+    <text x="304" y="206" text-anchor="end" class="sm">grønn/svart</text>
+    <text x="304" y="219" text-anchor="end" class="sm">(G/B)</text>
+
+    <rect x="232" y="84" width="120" height="96" rx="4" fill="#F4F7FA" stroke="#3A4753"/>
+    <text x="292" y="101" text-anchor="middle" class="hd">Startreleet</text>
+    <path d="M232 120 H256" stroke="#7A4A26" stroke-width="4"/>
+    <rect x="256" y="113" width="36" height="14" fill="#FFFFFF" stroke="#05090D"/>
+    <path d="M292 120 H310" stroke="#05090D" stroke-width="2"/>
+    <text x="274" y="144" text-anchor="middle" class="sm">spole</text>
+    <text x="274" y="157" text-anchor="middle" class="sm">145–190 Ω</text>
+    <text x="292" y="58" text-anchor="middle" class="sm">Kontakten: sikring ②</text>
+    <text x="292" y="72" text-anchor="middle" class="sm">(30 A) → startmotoren</text>
+
+    <rect x="232" y="232" width="120" height="114" rx="4" fill="#F4F7FA" stroke="#3A4753"/>
+    <text x="292" y="250" text-anchor="middle" class="hd">Motorstyringen</text>
+    <text x="292" y="264" text-anchor="middle" class="sm">(ECM)</text>
+    <text x="240" y="282" class="sm">pinne 23: jorder G/B</text>
+    <text x="240" y="295" class="sm">når du trykker START</text>
+    <text x="240" y="318" class="sm">pinne 21: leser brun</text>
+    <text x="240" y="332" class="sm">= NEUTRAL SWITCH</text>
+    <text x="292" y="362" text-anchor="middle" class="wr">17.09: OFF i nøytral</text>
+
+    <circle cx="60" cy="300" r="11" fill="#FFB000" stroke="#000"/>
+    <text x="60" y="303.5" text-anchor="middle" class="bd">18</text>
+    <text x="76" y="304" class="sm">steg 18: ca. 12 V</text>
+
+    <rect x="40" y="330" width="185" height="24" rx="3" fill="#FFFFFF" stroke="#05090D" stroke-width="1.5"/>
+    <circle cx="60" cy="342" r="4" fill="#05090D"/>
+    <circle cx="205" cy="342" r="4" fill="#05090D"/>
+    <text x="132" y="346" text-anchor="middle" class="sm">pluggen (2 pinner)</text>
+    <text x="132" y="370" text-anchor="middle" class="sm">nede ved motorholderen</text>
+
+    <path d="M60 405 H205" stroke="#FFB000" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <circle cx="132" cy="405" r="11" fill="#FFB000" stroke="#000"/>
+    <text x="132" y="408.5" text-anchor="middle" class="bd">19</text>
+    <text x="132" y="430" text-anchor="middle" class="sm">steg 19: pipetone i nøytral</text>
+
+    <circle cx="98" cy="460" r="4.5" fill="#FFFFFF" stroke="#05090D" stroke-width="2"/>
+    <circle cx="166" cy="460" r="4.5" fill="#FFFFFF" stroke="#05090D" stroke-width="2"/>
+    <path d="M101 458 L160 444" stroke="#05090D" stroke-width="3" stroke-linecap="round"/>
+    <path d="M140 494 V458" stroke="#3A4753" stroke-width="2"/>
+    <polygon points="135,462 140,452 145,462" fill="#3A4753"/>
+    <text x="140" y="508" text-anchor="middle" class="sm">girarmen trykker her i nøytral</text>
+    <text x="132" y="532" text-anchor="middle" class="hd">Nøytralbryteren</text>
+    <text x="132" y="548" text-anchor="middle" class="sm">lukket i nøytral, brutt i gir</text>
+  </svg>
+  <figcaption>Tegnet etter håndboka s. 3-18, 3-60, 4-12 og 4-15, forenklet. Tallene i de gule
+    rundingene er stegene der du måler.</figcaption>
+</figure>
+
+<ul>
+  <li><strong>Gul/grønn:</strong> fra tenningsbryteren, via pluggen, inn på bryteren. Ca. 12 V med
+    tenningen på.</li>
+  <li><strong>Brun:</strong> ut fra bryteren, via pluggen, til startreleets spole og til
+    motorstyringen, pinne 21. Ca. 12 V i nøytral og ca. 0 V i gir (håndboka s. 3-60).</li>
+  <li><strong>Grønn/svart:</strong> fra startreleets spole til motorstyringen, pinne 23.
+    Motorstyringen kobler den til jord når du trykker START, og da trekker releet.</li>
+</ul>
+
+<h2>Selve bryteren</h2>
+
+<figure class="diagram">
+  <svg class="dg" viewBox="0 0 360 210" role="img" aria-labelledby="nb-t nb-d">
+    <title id="nb-t">Tegning av nøytralbryteren</title>
+    <desc id="nb-d">Et lite svart bryterhus med ett skruehull i venstre ende og en tynn fjærarm av metall langs oversiden, med krøll på enden. Gul/grønn og brun ledning kommer ut nederst og går inn i en svart kabel fram til en svart 2-pins plugg. Den hvite klossen på girarmen trykker fjærarmen ned i nøytral.</desc>
+
+    <path d="M151 130 V150" stroke="#E2C400" stroke-width="3.5"/>
+    <path d="M151 130 V150" stroke="#2F8A3E" stroke-width="3.5" stroke-dasharray="2 4"/>
+    <path d="M159 130 V150" stroke="#7A4A26" stroke-width="3.5"/>
+    <path d="M155 150 V172 H64" fill="none" stroke="#20262C" stroke-width="7" stroke-linejoin="round"/>
+    <rect x="20" y="160" width="44" height="24" rx="4" fill="#20262C"/>
+    <path d="M28 166 V178 M36 166 V178" stroke="#8A96A3" stroke-width="2"/>
+
+    <rect x="120" y="70" width="120" height="60" rx="6" fill="#20262C"/>
+    <circle cx="142" cy="96" r="9" fill="#C3CDD8" stroke="#05090D"/>
+    <path d="M128 68 L246 57 Q262 55 260 45 Q258 37 250 41" fill="none" stroke="#8A96A3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="214" y="14" width="26" height="24" rx="2" fill="#FFFFFF" stroke="#3A4753" stroke-width="1.5"/>
+    <polygon points="222,40 227,49 232,40" fill="#3A4753"/>
+    <path d="M104 97 H131" stroke="#3A4753" stroke-width="1"/>
+
+    <text x="100" y="101" text-anchor="end" class="sm">skruehull</text>
+    <text x="246" y="28" class="sm">hvit kloss på girarmen</text>
+    <text x="266" y="68" class="sm">fjærarm (metall)</text>
+    <text x="248" y="106" class="sm">bryterhus</text>
+    <text x="248" y="120" class="sm">(svart plast)</text>
+    <text x="166" y="146" class="sm">gul/grønn og brun</text>
+    <text x="110" y="164" text-anchor="middle" class="sm">kabel</text>
+    <text x="8" y="202" class="sm">svart plugg, 2 pinner</text>
+  </svg>
+  <figcaption>Tegning, ikke i skala. Formen er etter håndboka s. 4-16, nærbildet over og et bilde
+    av originaldelen.</figcaption>
+</figure>
+
+<p>Delen heter «SWITCH ASSY, NEUTRAL», delenummer <strong>37721-93J00</strong>. Søker du på
+delenummeret, finner du bilder av den. Forhandlere oppgir den for DF200–DF300, men jeg har ikke
+funnet en offisiell delekatalog som bekrefter akkurat DF300 fra 2007. Oppgi motorens
+serienummer til en Suzuki-forhandler før du bestiller.</p>
+
+<p>Bryteren byttes som én enhet. Originaldelen leveres med kabel og en svart 2-pins plugg. På bildet ditt holdes den av én skrue
+<span class="mk">A</span>, og så er det pluggen. Ta bilde av hvordan den sitter før du skrur den
+løs. Etter byttet gjelder samme krav som i steg 28: pipetone i nøytral, og brudd i begge
+girene.</p>
+
 <h2>Del 1 — Rigg (15 min)</h2>
 
 <ol>
@@ -180,8 +322,10 @@ målinger i sekundet.</p>
   <li class="step">Finn pluggen til bryteren: følg kabelen fra bryterhuset <span class="mk">A</span>.
     Den har to ledninger, <strong>gul/grønn</strong> og <strong>brun</strong>. <strong>Ikke koble den
     fra.</strong>
-    <span class="note">Kabelen er bundet sammen med ledningen fra girmotoren (håndboka s. 11-15).
-    Finner du ikke pluggen, hopp over steg 13.</span></li>
+    <span class="note">Pluggen er svart, med 2 pinner. Kabelen er bundet sammen med ledningen fra
+    girmotoren (håndboka s. 11-15), og pluggen sitter trolig i samlingen av plugger nede ved
+    motorholderen, sammen med girsensorens og girmotorens (s. 7-3). Den svarte pluggen med rød og
+    svart ledning rett over girmotoren er ikke den. Finner du den ikke, hopp over steg 13.</span></li>
   <li class="step">Lukk Service Data. DATA LOGGER → Setup → huk av <code>NEUTRAL SWITCH</code>,
     <code>SHIFT POSITION SNSR OUTPUT</code>, <code>BATTERY VOLTAGE</code> og
     <code>ENGINE SPEED</code> → Monitor → <strong>Go</strong>. Se at telleren løper.</li>
