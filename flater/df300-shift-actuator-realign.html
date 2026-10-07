@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Girakuatoren DF300 — sett armen tilbake</title>
+<meta name="description" content="Aktuatorarmen på DF300 har kjørt til endestopp, og girstaget når ikke girarmen. Slik kjøres armen tilbake med 12 V i korte støt, og staget settes på igjen.">
+<meta name="theme-color" content="#FFFFFF">
+
+<meta name="flate:kind" content="guide">
+<meta name="flate:date" content="2026-10-07">
+
+<link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+
+<!-- Self-contained like df300-no-start-field-guide.html: every style lives here,
+     so no shared stylesheet can be served stale from the offline cache.
+     Light palette regardless of the device setting - it is read outdoors. -->
+<style>
+  :root {
+    --ground: #FFFFFF;
+    --text:   #05090D;
+    --dim:    #3A4753;
+    --faint:  #64717F;
+    --line:   #C3CDD8;
+    --card:   #F4F7FA;
+    --accent: #14506B;
+    --warn:   #7A4E0A;
+    --amber:  #FFB000;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 40rem; margin: 0 auto; padding: 16px 16px 48px; }
+  .back { display: inline-block; padding: 4px 0; color: var(--faint); font-size: 0.85rem; text-decoration: none; }
+  h1 { margin: 0.5rem 0 1rem; font-size: 1.6rem; line-height: 1.2; }
+  h2 { margin: 2.2rem 0 0.6rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 1.2rem; line-height: 1.3; }
+  p { margin: 0.6rem 0; }
+  img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line); }
+  figure { margin: 1rem 0 1.25rem; }
+  figcaption { margin-top: 0.4rem; color: var(--dim); font-size: 0.92rem; }
+  ul, ol { padding-left: 1.6rem; }
+  li { margin: 0.55rem 0; }
+  .note { display: block; margin-top: 0.15rem; color: var(--dim); font-size: 0.9rem; }
+  .box { margin: 1rem 0; padding: 0.7rem 1rem; background: var(--card); border-left: 4px solid var(--accent); }
+  .box.warn { border-left-color: var(--warn); }
+  .box p { margin: 0.4rem 0; }
+  .box ul { margin: 0.4rem 0; }
+  code { padding: 0 0.2em; background: var(--card); font: 0.88em/1.4 ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+  .mk {
+    display: inline-block;
+    min-width: 1.45em;
+    height: 1.45em;
+    margin: 0 0.15em;
+    border: 1px solid #000;
+    border-radius: 50%;
+    background: var(--amber);
+    color: #000;
+    font-size: 0.82em;
+    font-weight: 700;
+    line-height: 1.4em;
+    text-align: center;
+    vertical-align: 0.08em;
+  }
+</style>
+</head>
+<body>
+<main>
+
+<a class="back" href="/">&larr; alle flater</a>
+
+<h1>Girakuatoren DF300 — sett armen tilbake</h1>
+
+<p>Girstaget ble tatt av mens tenningen var på og sikring ④ satt i. Da kjørte aktuatoren armen
+<span class="mk">A</span> til endestopp, og nå når ikke staget girarmen <span class="mk">B</span>.
+Her kjører du armen tilbake med 12 V rett på girmotoren, i korte støt, og setter staget på igjen.
+Regn med en time.</p>
+
+<p>Girmotoren er en vanlig likestrømsmotor med to ledninger. Den går den ene eller den andre
+veien etter hvordan pluss og minus står (håndboka s. 3-79 og 3-80). Fremgangsmåten er brukt av
+eiere på forum, og den stemmer med håndboka, men <strong>det er ikke en Suzuki-prosedyre</strong>.</p>
+
+<div class="box warn">
+  <p><strong>12 V bare på motorsiden av pluggen.</strong> Den andre halvdelen går til
+    motorstyringen, og 12 V der kan skade den.</p>
+  <p><strong>Sikring i plussledningen</strong>, helt inntil batteriet, høyst 15 A. Det er samme
+    størrelse som sikring ④.</p>
+  <p><strong>Korte støt, under ett sekund.</strong> Hold aldri strømmen på mens armen står mot et
+    stopp.</p>
+  <p><strong>La aldri de to ledningene eller pinnene berøre hverandre.</strong></p>
+  <p><strong>Tenningen av</strong> hele tiden, til del 4 sier noe annet.</p>
+</div>
+
+<h2>Ta med</h2>
+
+<ul>
+  <li>Multimeter</li>
+  <li>To ledninger med tynne pinner eller flatstifter i den ene enden, som passer i hullene i en
+    liten plugg, og klemmer i den andre</li>
+  <li>En sikringsholder med en sikring på 10–15 A, eller et 12 V verktøybatteri</li>
+  <li>Tape og en tusj, nebbtang og en kopp til klips og skive</li>
+  <li>Telefonen, til bilder</li>
+  <li>Valgfritt: laptopen med SDS, til kontrollen i del 4</li>
+</ul>
+
+<p>Åpne denne sida én gang hjemme før du drar. Da ligger bildene lagret på telefonen og vises
+også uten dekning.</p>
+
+<h2>Hvor ting sitter</h2>
+
+<figure>
+  <img src="/assets/img/df300-actuator/actuator.jpg" width="1200" height="900"
+    alt="Aktuatoren sett fra siden: den svarte girmotoren til venstre, utvekslingen i lyst metall over, og girstaget nederst mellom aktuatorarmen til høyre og girarmen til venstre. Fire markeringer: M, U, A og B.">
+  <figcaption>
+    Bildet er fra 4. oktober, med staget på og alt i nøytral.
+    <span class="mk">M</span> Girmotoren.
+    <span class="mk">U</span> Utvekslingen.
+    <span class="mk">A</span> Aktuatorarmen, med stagets ende og klips. Det er denne armen som skal
+    kjøres tilbake. Staget sitter fortsatt fast her.
+    <span class="mk">B</span> Girarmen. Her tok du av staget, og her skal det på igjen.
+  </figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/img/df300-no-start/fuse-box.jpg" width="1200" height="900"
+    alt="Sikringsboksen med lokket av: to like reléer side om side og sikringer rundt. Startreleet og sikring nummer 4 er rammet inn.">
+  <figcaption>
+    <span class="mk">G</span> Sikring ④, 15 A, girmotoren. De to blå 15 A-sikringene ser like ut.
+    Den andre er gasspjeldet, så sjekk mot etiketten på lokket.
+  </figcaption>
+</figure>
+
+<h2>Del 1 — Sikre motoren (5 min)</h2>
+
+<ol>
+  <li class="step"><strong>Tenning av.</strong> Ta ut sikring ④ <span class="mk">G</span>.
+    <span class="note">Den står i nå. Uten den kan ikke motorstyringen kjøre girmotoren hvis noen
+    slår på tenningen.</span></li>
+  <li class="step">Ta bilder av aktuatorarmen <span class="mk">A</span>, staget og girarmen
+    <span class="mk">B</span> slik de står nå.</li>
+  <li class="step">Sett girarmen <span class="mk">B</span> i <strong>ekte nøytral</strong>: drei
+    propellen for hånd og før girarmen til midt i området der propellen går fritt begge veier.
+    <span class="note">I forover og revers låser propellen i den ene retningen. Nøytral er der den
+    går fritt begge veier.</span></li>
+</ol>
+
+<h2>Del 2 — Finn og sjekk girmotorens plugg (15 min)</h2>
+
+<ol start="4">
+  <li class="step">Følg ledningen som kommer ut av selve girmotoren <span class="mk">M</span> til
+    den første pluggen. Den skal ha <strong>to pinner</strong>.
+    <span class="note">Trolig er det den svarte pluggen med rød og svart ledning rett over
+    girmotoren, men det er ikke bekreftet. Nøytralbryterens plugg har også to pinner, men gul/grønn
+    og brun ledning.</span></li>
+  <li class="step">Koble den fra. Sett tape på halvdelen der ledningene går inn i aktuatoren, og
+    skriv <strong>MOTOR</strong> på den.
+    <span class="note">Den andre halvdelen går til motorstyringen. Den skal ikke ha strøm.</span></li>
+  <li class="step">Mål motstanden mellom de to pinnene på <strong>motorsiden</strong>. Hold probene
+    mot hverandre først og trekk det tallet fra. Ventet: <strong>0,3–10 Ω</strong> (håndboka
+    s. 3-80).</li>
+</ol>
+
+<div class="box">
+  <p><strong>Hva målingen betyr</strong></p>
+  <ul>
+    <li><strong>0,3–10 Ω, og det endrer seg ikke:</strong> det er girmotoren, og viklingen er hel.
+      Gå videre.</li>
+    <li><strong>Nesten 0 Ω, eller ingen kontakt, og det skifter når girarmen beveges:</strong> det er
+      nøytralbryteren, ikke girmotoren. Sett pluggen sammen igjen og let videre.</li>
+    <li><strong>Utenfor 0,3–10 Ω på riktig plugg:</strong> girmotoren er defekt.
+      <strong>Stopp.</strong> Ikke sett strøm på. Sett pluggen sammen igjen og la en mekaniker ta
+      over.</li>
+  </ul>
+</div>
+
+<h2>Del 3 — Kjør armen tilbake (15 min)</h2>
+
+<ol start="7">
+  <li class="step">Gjør klar strømmen: sikringen i plussledningen, helt inntil batteriet. Fest
+    minusledningen til batteriets minus.
+    <span class="note">Et 12 V verktøybatteri gir mindre strøm enn båtbatteriet hvis noe går
+    galt. Bruk sikring uansett.</span></li>
+  <li class="step">Sett minuspinnen i den ene pinnen på motorsiden. Berør den andre pinnen med
+    plusspinnen i <strong>et kort støt</strong>, under ett sekund. Se hvilken vei armen
+    <span class="mk">A</span> går.</li>
+  <li class="step">Går armen videre mot stoppet den står mot nå, bytt om pluss og minus.</li>
+  <li class="step">Kjør armen den andre veien i <strong>små støt</strong>. Prøv staget mot pinnen
+    på girarmen <span class="mk">B</span> mellom hvert støt.
+    <span class="note">Girarmen skal stå i nøytral hele tiden. Det er aktuatorarmen som
+    flyttes.</span></li>
+  <li class="step">Stopp når hullet i staget passer over pinnen på girarmen uten at noe må
+    tvinges.
+    <span class="note">Går du forbi, gi et kort støt tilbake.</span></li>
+  <li class="step">Ta strømmen fra pinnene, og koble ledningene fra batteriet.</li>
+</ol>
+
+<div class="box warn">
+  <p><strong>Stopp og la en mekaniker ta over</strong> hvis armen ikke rører seg i noen retning,
+    hvis girmotoren durer uten at armen går, eller hvis staget ikke passer selv når armen er kjørt
+    så langt den går.</p>
+</div>
+
+<h2>Del 4 — Sett sammen og kontroller (15 min)</h2>
+
+<ol start="13">
+  <li class="step">Staget på girarmen <span class="mk">B</span> med skive og klips.
+    <span class="note">Klipsen skal låse helt.</span></li>
+  <li class="step">Sett girmotorens plugg sammen til den klikker.
+    <span class="note">Er pinnene matte eller grønne, rens dem og smør et tynt lag dielektrisk fett
+    før du setter den sammen.</span></li>
+  <li class="step">Sikring ④ inn.</li>
+  <li class="step"><strong>Tenning på, ikke START.</strong> Lytt: girmotoren skal gjøre en liten
+    korreksjon og stoppe.
+    <span class="note">Går den i mer enn et par sekunder, <strong>tenning av med en
+    gang</strong>.</span></li>
+  <li class="step">Med SDS: lagre All Service Data. Girsensoren
+    (<code>SHIFT POSITION SNSR OUTPUT</code>) skal vise ca. <strong>2,5 V</strong>, og målet
+    (<code>ESA TRGT POSITION</code>) <strong>2,50 V</strong>.
+    <span class="note">8-2-telleren bør stå på 7 og 8-3-telleren på 2, som 6. oktober. Har de gått
+    opp, slå av tenningen og la det ligge.</span></li>
+  <li class="step"><strong>Tenning av.</strong></li>
+</ol>
+
+<div class="box">
+  <p><strong>Startfeilen er ikke løst med dette.</strong> NEUTRAL SWITCH vil trolig fortsatt stå på
+    OFF, og motoren vil ikke starte. Dette setter bare staget og aktuatoren tilbake slik de skal
+    være, så motoren står trygt over vinteren og mekanikeren kan starte derfra.</p>
+</div>
+
+<h2>Hvis du heller vil vente</h2>
+
+<p>La staget være av, la sikring ④ være ute, og ikke slå på tenningen. Da skjer det ingenting
+med aktuatoren over vinteren.</p>
+
+</main>
+
+<script src="/assets/js/offline.js" defer></script>
+</body>
+</html>
