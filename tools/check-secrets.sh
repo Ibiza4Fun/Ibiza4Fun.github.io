@@ -22,7 +22,8 @@
 # missing scanner means an unscanned commit, and an unscanned commit is permanent.
 # Installing the scanner is one command; recalling a pushed secret is not.
 #
-#   winget install --id Gitleaks.Gitleaks
+#   winget install --id Gitleaks.Gitleaks            (Windows)
+#   the release binary from github.com/gitleaks/gitleaks/releases in ~/.local/bin   (Linux)
 #
 # Exit 0 = clean. Exit 1 = refused, with the reason on stderr.
 
@@ -37,9 +38,9 @@ if command -v gitleaks >/dev/null 2>&1; then
   GITLEAKS=$(command -v gitleaks)
 else
   for c in \
-    "$LOCALAPPDATA/Microsoft/WinGet/Links/gitleaks.exe" \
-    "$LOCALAPPDATA/Microsoft/WinGet/Packages/Gitleaks.Gitleaks_Microsoft.Winget.Source_8wekyb3d8bbwe/gitleaks.exe" \
-    "/usr/local/bin/gitleaks" "/opt/homebrew/bin/gitleaks"
+    "${LOCALAPPDATA:-}/Microsoft/WinGet/Links/gitleaks.exe" \
+    "${LOCALAPPDATA:-}/Microsoft/WinGet/Packages/Gitleaks.Gitleaks_Microsoft.Winget.Source_8wekyb3d8bbwe/gitleaks.exe" \
+    "$HOME/.local/bin/gitleaks" "/usr/local/bin/gitleaks" "/opt/homebrew/bin/gitleaks"
   do
     if [ -x "$c" ]; then GITLEAKS="$c"; break; fi
   done
@@ -49,7 +50,8 @@ if [ -z "$GITLEAKS" ]; then
   echo "check-secrets: the secret scanner is NOT INSTALLED, so nothing was scanned." >&2
   echo "  This hook refuses rather than passing an unscanned commit. A guard that" >&2
   echo "  cannot run must not look like one that ran." >&2
-  echo "  Install it:  winget install --id Gitleaks.Gitleaks" >&2
+  echo "  Install it:  winget install --id Gitleaks.Gitleaks (Windows), or the release" >&2
+  echo "               binary from github.com/gitleaks/gitleaks/releases in ~/.local/bin (Linux)" >&2
   exit 1
 fi
 
@@ -112,7 +114,7 @@ if ! "$GITLEAKS" git --staged --no-banner --redact 2>&1; then
   echo "  If it is a sample:  give it an obviously fictional shape, or add a narrow" >&2
   echo "                      allowlist entry to .gitleaks.toml naming this one path." >&2
   echo "" >&2
-  echo "  Secrets belong in C:\\Users\\bardb\\.secrets\\ - outside every repository," >&2
+  echo "  Secrets belong in ~/.secrets/ - outside every repository," >&2
   echo "  where no commit can reach them." >&2
   exit 1
 fi
