@@ -50,8 +50,7 @@ if [ -z "$GITLEAKS" ]; then
   echo "check-secrets: the secret scanner is NOT INSTALLED, so nothing was scanned." >&2
   echo "  This hook refuses rather than passing an unscanned commit. A guard that" >&2
   echo "  cannot run must not look like one that ran." >&2
-  echo "  Install it:  winget install --id Gitleaks.Gitleaks (Windows), or the release" >&2
-  echo "               binary from github.com/gitleaks/gitleaks/releases in ~/.local/bin (Linux)" >&2
+  echo "  Install it:  winget install --id Gitleaks.Gitleaks, or on Linux the release binary in ~/.local/bin" >&2
   exit 1
 fi
 
