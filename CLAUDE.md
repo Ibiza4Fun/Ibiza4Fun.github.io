@@ -125,8 +125,7 @@ Green is not the same as correct. Do all four:
 3. Every published path returns 200 - the new page, and the assets.
 4. A path that does not exist returns 404. A check that cannot fail proves nothing.
 
-Note for PowerShell: `Invoke-WebRequest` needs `-UseBasicParsing` here, or it dies on an
-interactive first-run prompt and reports an error that has nothing to do with the site.
+To read a status code: `curl -s -o /dev/null -w '%{http_code}\n' <url>`.
 
 ---
 
