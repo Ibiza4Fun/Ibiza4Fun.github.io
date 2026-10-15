@@ -142,7 +142,9 @@ const patterns = [
   [/\b[\w.+-]+@[\w-]+\.[\w.]+\b/g, "email address"],
   [/\b(?:token|secret|password|passord|api[_-]?key|bearer)\b/gi, "credential word"],
   [/\b\d{1,2}\.\d{4,6},\s?\d{1,2}\.\d{4,6}\b/g, "possible coordinates"],
-  [/C:\\Users\\[^\s"'<>]+/g, "local file path"],
+  [/[cC]:[\\/]{1,2}Users[\\/]{1,2}[^\s"'<>]+/g, "local file path"],
+  // A Linux home path. The lookbehind keeps a URL's own /home/ segment out of it.
+  [/(?<![\w.:\/-])\/home\/[^\s"'<>]+/g, "local file path"],
   [/https?:\/\/claude\.ai[^\s"'<>]*/g, "claude.ai link (needs login, dead for others)"],
 ];
 

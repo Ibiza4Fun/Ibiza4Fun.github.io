@@ -1,7 +1,7 @@
 # ibiza4fun.github.io
 
 A public, static site. It is a sibling of the Øyna repositories under
-`C:\Users\bardb\repos`, so the workspace root `CLAUDE.md` and the unscoped rules in
+`/home/bard/repos`, so the workspace root `CLAUDE.md` and the unscoped rules in
 `.claude/rules/` load on top of this file.
 
 **This file is the standing instruction for the site.** It exists so Bård never has to
@@ -57,7 +57,7 @@ File names and slugs stay English and ASCII, because a file name becomes a URL.
 
 Everything committed here is world-readable the moment it is pushed, and published is
 published even after a delete. `tools/import.mjs` scans for IP addresses, phone numbers,
-email addresses, credential words, coordinates, local `C:\Users\...` paths and
+email addresses, credential words, coordinates, local `C:\Users\...` and `/home/...` paths and
 claude.ai links, and **refuses the import** when it finds any. `--accept-flagged`
 overrides it, and is only for after a human has read what it found.
 
